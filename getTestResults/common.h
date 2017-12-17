@@ -221,3 +221,73 @@ JULEI_Joint julei_line[JULEI_line_Num * 2] =
 	r16,r15,
 	r15,r14	
 };
+
+//-------------------------------------------------------------------4个特征点
+
+enum JULEI4_Joint_Num
+{
+	JULEI4_Num = 21,
+	JULEI4_line_Num = 21
+};
+enum JULEI4_Joint
+{
+	hip0 = 0,
+	h1 = 1,
+	h2 = 2,
+	h3 = 3,
+	h4 = 4,
+	left5 = 5,
+	left6 = 6,
+	left7 = 7,
+	left8 = 8,
+	right9 = 9,
+	right10 = 10,
+	right11 = 11,
+	right12 = 12,
+	leg13 = 13,
+	leg14 = 14,
+	leg15 = 15,
+	leg16 = 16,
+	leg17 = 17,
+	leg18 = 18,
+	leg19 = 19,
+	leg20 = 20
+};
+
+JULEI4_Joint julei4_line[JULEI4_line_Num * 2] =
+{
+	//主
+	left5, hip0,
+	h1, hip0,
+	right9, hip0,
+	leg13, hip0,
+	leg17, hip0,
+	//整体
+
+	left5, left6,
+	left6, left7,
+	left7, left8,
+	left8, h1,
+
+	h1, right12,
+	
+
+	
+
+
+	//h4, right12,
+	right12, right11,
+	right11, right10,
+	right10, right9,
+
+	hip0, leg16,
+	leg16, leg15,
+	leg15, leg14,
+	leg14, leg13,
+
+	hip0, leg20,
+	leg20, leg19,
+	leg19, leg18,
+	leg18, leg17
+
+};

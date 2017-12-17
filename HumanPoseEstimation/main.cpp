@@ -60,7 +60,7 @@ int main()
 		{
 			int start;
 			cin >> start;
-			for (int frame = start; frame <= 299; frame++)
+			for (int frame = start; frame <= 246; frame++)
 			{
 				run(aciton, people, frame);
 			}

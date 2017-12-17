@@ -152,7 +152,7 @@ void drawJoints(Mat &photo, vector<int>X, vector<int>Y,int flag)
 	for (int i = 0; i < X.size(); i++)
 	{
 		stringstream ss;
-		ss << (i+1);
+		ss << i;
 		if (flag == 1)//groundtruth
 		{
 			circle(photo, Point(X[i], Y[i]), 2, Scalar(0, 255,0), 1);
@@ -1206,8 +1206,8 @@ void temp()
 		}
 	}	
 }
-//显示聚类点并连线
-void temp2()
+//显示3个聚类点并连线
+void temp3()
 {
 	Mat depthData(KINECTHEIGHT, KINECTWIDTH, CV_64FC3);
 	Mat photo(KINECTHEIGHT, KINECTWIDTH, CV_8UC3);
@@ -1223,17 +1223,17 @@ void temp2()
 
 	stringstream ss;
 	vector<int>X, Y;
-	for (int action = 5; action <= 5; action++)
+	for (int action = 7; action <= 7; action++)
 	{
 		for (int people = 1; people <= 1; people++)
 		{
-			for (int index = 999; index <= 999; index++)
+			for (int index = 0; index <= 299; index++)
 			{
 				src.clear();
 				X.clear();
 				Y.clear();
 				ss.str("");
-				ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\0056test.txt";
+				ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
 
 				cout << ss.str() << endl;
 				if (!readGuessFile(ss.str(), X, Y))continue;
@@ -1262,7 +1262,73 @@ void temp2()
 				waitKey(1);
 
 				stringstream spath;
-				spath << "C:\\Users\\jwh\\Desktop\\bbbb.jpg";
+				spath << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\001.jpg";
+
+				cout << spath.str() << endl;
+				imwrite(spath.str(), photo);
+			}
+		}
+	}
+
+	getchar();
+}
+//显示4个聚类点并连线
+void temp4()
+{
+	Mat depthData(KINECTHEIGHT, KINECTWIDTH, CV_64FC3);
+	Mat photo(KINECTHEIGHT, KINECTWIDTH, CV_8UC3);
+
+	Mat tmp;
+	Mat tmp2;
+	ImageShow ShowTool;
+	vector<Data> src;
+	Loading Load;
+
+	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+	string prefix2 = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
+
+	stringstream ss;
+	vector<int>X, Y;
+	for (int action = 7; action <= 7; action++)
+	{
+		for (int people = 1; people <= 1; people++)
+		{
+			for (int index = 79; index <= 79; index++)
+			{
+				src.clear();
+				X.clear();
+				Y.clear();
+				ss.str("");
+				ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints.txt";
+
+				cout << ss.str() << endl;
+				if (!readGuessFile(ss.str(), X, Y))continue;
+
+				ss.str("");
+				ss << prefix2 << "\\action" << action << "\\people" << people << "\\output" << index << ".txt";
+				Load.DownLoad_XuNiData(ss.str(), src, 1);
+				photo = ShowTool.getPhoto(src);
+				drawJoints(photo, X, Y, 0);
+
+
+				for (int k = 0; k < 5; k++)
+				{
+					Point a(X[julei4_line[2 * k]], Y[julei4_line[2 * k]]);
+					Point b(X[julei4_line[2 * k + 1]], Y[julei4_line[2 * k + 1]]);
+					line(photo, a, b, Scalar(0, 0, 255), 4);
+				}
+				for (int k = 5; k < 21; k++)
+				{
+					Point a(X[julei4_line[2 * k]], Y[julei4_line[2 * k]]);
+					Point b(X[julei4_line[2 * k + 1]], Y[julei4_line[2 * k + 1]]);
+					line(photo, a, b, Scalar(0, 255, 255), 2);
+				}
+
+				imshow("kinect", photo);
+				waitKey(1);
+
+				stringstream spath;
+				spath << "C:\\Users\\jwh\\Desktop\\00000.jpg";
 				cout << spath.str() << endl;
 				imwrite(spath.str(), photo);
 			}
@@ -1274,7 +1340,6 @@ void temp2()
 
 // 合并多张图像 显示结果
 //20171205
-
 void mymerge()
 {
 	string  path = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion\\action7\\people1\\";
@@ -1336,6 +1401,9 @@ void mymerge2()
 
 	waitKey(0);
 }
+
+
+
 int main()
 {
 	//xunishuju();
@@ -1343,7 +1411,7 @@ int main()
 
 	//mymerge2();
 
-	temp2();
+	temp3();
 	//showKinectResult();
 	//testKinectData();
 	system("PAUSE");
