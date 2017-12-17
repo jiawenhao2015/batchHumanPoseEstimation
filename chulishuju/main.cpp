@@ -73,6 +73,19 @@ void Write2GT(string matrixPath, vector<vector<int>>& vec)
 	return;
 }
 
+//写聚类特征点
+//20171217
+void Write2Fea(string matrixPath, vector<vector<int>>& vec)
+{
+	ofstream matrixFile(matrixPath);
+
+	for (int i = 0; i < vec.size(); i++)
+	{
+		matrixFile << vec[i][0] << " " << vec[i][1] <<endl;
+	}
+	matrixFile.close();
+	return;
+}
 
 //读入一个txt groundtruth 二维坐标的 返回一个数组
 //2017.11.27
@@ -258,7 +271,7 @@ int get3dFea(int actionBegin, int actionEnd,
 
 				if (dim == 4)
 				{
-					ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints.txt";
+					ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
 					ss2 << output << "\\action" << action << "\\people" << people << "\\output" << index << ".txt";
 					ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
 				}
@@ -713,16 +726,12 @@ void jiaozhun()
 		{
 			for (int index = 226; index <= 290; index++)
 			{
-				vector<vector<int>> gt2;
-				map <vector<int>, vector<float>> mp;
+				vector<vector<int>> gt2;				
 				stringstream ss1;
 
 				ss1 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth" << index << ".txt";
 
-
 				string p1 = ss1.str();
-
-
 
 				cout << p1 << endl;
 				Read2GT(p1, gt2);
@@ -733,10 +742,81 @@ void jiaozhun()
 	}
 
 }
+//调整头部聚类特征点位置 
+//20171217
+int minDistance(vector<int>&input,vector<vector<int>>& gt2, vector<bool>&flag)
+{
+//返回距离input最近的点  下标
+	float mindis = 9999999.0;
+	int minIndex = 2;
+	for (int i = 2; i <= 4;i++)
+	{
+		if (flag[i] == false)//未更改
+		{
+			int t = (gt2[i][0] - input[0])*(gt2[i][0] - input[0]) + (gt2[i][1] - input[1])*(gt2[i][1] - input[1]);
+
+			if (t < mindis)
+			{
+				mindis = t;
+				minIndex = i;
+			}
+		}
+	}
+	flag[minIndex] = true;//用过 标记
+	return minIndex;
+}
+void adjustClusterPoint(vector<vector<int>>& gt2)
+{
+	vector<vector<int>> temp = gt2;
+	vector<bool>flag(5, false);
+	int nearIndex=2;
+	nearIndex = minDistance(gt2[8], gt2, flag);//距离8最近的作为3
+	temp[3] = gt2[nearIndex];
+	
+	nearIndex = minDistance(gt2[12], gt2, flag);//距离12最近的作为4
+	temp[4] = gt2[nearIndex];
+
+	for (int i = 2; i <= 4; i++)if (flag[i] == false)nearIndex = i;
+	temp[2] = gt2[nearIndex];//另外一个作为2;
+
+	gt2 = temp;
+}
+void adjustClusterPoint()
+{
+	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+	for (int action = 7; action <= 7; action++)
+	{
+		for (int people = 1; people <= 1; people++)
+		{
+			for (int index = 0; index <= 299; index++)
+			{
+				vector<vector<int>> gt2;				
+				stringstream ss1;
+
+				ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints.txt";
+
+				string p1 = ss1.str();
+
+				cout << p1 << endl;
+				Read2Fea(p1, gt2);
+				
+				adjustClusterPoint(gt2);
+
+				ss1.str("");
+				ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
+				Write2Fea(ss1.str(), gt2);
+			}
+		}
+	}
+
+}
+
+
 int main()
 {
+	//adjustClusterPoint();
 	//jiaozhun();
-	//creatClusterFeature2(7,7,1,1,0,299);
+	//creatClusterFeature2(7,7,1,1,0,299);//这个是新特征 
 //	creatClusterFeature(7, 7, 1, 1, 0, 299);
 
 	//creatGroundTruthFeature(7, 7, 1, 1, 0, 299);
