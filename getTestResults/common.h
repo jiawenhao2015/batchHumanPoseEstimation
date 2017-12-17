@@ -227,7 +227,7 @@ JULEI_Joint julei_line[JULEI_line_Num * 2] =
 enum JULEI4_Joint_Num
 {
 	JULEI4_Num = 21,
-	JULEI4_line_Num = 21
+	JULEI4_line_Num = 27
 };
 enum JULEI4_Joint
 {
@@ -267,15 +267,17 @@ JULEI4_Joint julei4_line[JULEI4_line_Num * 2] =
 	left5, left6,
 	left6, left7,
 	left7, left8,
-	left8, h1,
+	left8, h3,
 
-	h1, right12,
+	h1, h2,
+	h2,h3,
+	h2,h4,
+	h3,h4,
 	
+	h3,hip0,
+	h4,hip0,
 
-	
-
-
-	//h4, right12,
+	h4, right12,
 	right12, right11,
 	right11, right10,
 	right10, right9,

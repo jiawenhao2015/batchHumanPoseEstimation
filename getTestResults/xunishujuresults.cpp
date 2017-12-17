@@ -1317,7 +1317,7 @@ void temp4()
 					Point b(X[julei4_line[2 * k + 1]], Y[julei4_line[2 * k + 1]]);
 					line(photo, a, b, Scalar(0, 0, 255), 4);
 				}
-				for (int k = 5; k < 21; k++)
+				for (int k = 5; k < 27; k++)
 				{
 					Point a(X[julei4_line[2 * k]], Y[julei4_line[2 * k]]);
 					Point b(X[julei4_line[2 * k + 1]], Y[julei4_line[2 * k + 1]]);
@@ -1411,7 +1411,7 @@ int main()
 
 	//mymerge2();
 
-	temp3();
+	temp4();
 	//showKinectResult();
 	//testKinectData();
 	system("PAUSE");

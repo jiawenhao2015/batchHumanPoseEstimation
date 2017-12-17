@@ -110,7 +110,7 @@ JULEI_Joint julei_line[JULEI_line_Num * 2] =
 enum JULEI4_Joint_Num
 {
 	JULEI4_Num = 21,
-	JULEI4_line_Num = 25
+	JULEI4_line_Num = 27
 };
 enum JULEI4_Joint
 {
@@ -142,7 +142,7 @@ JULEI4_Joint julei4_line[JULEI4_line_Num * 2] =
 	//Ö÷
 	left5, hip0,
 	h1, hip0,
-	right9,hip0,
+	right9, hip0,
 	leg13, hip0,
 	leg17, hip0,
 	//ÕûÌå
@@ -150,28 +150,29 @@ JULEI4_Joint julei4_line[JULEI4_line_Num * 2] =
 	left5, left6,
 	left6, left7,
 	left7, left8,
-	left8, h2,
+	left8, h3,
 
-	h1,h3,
-	h3,h2,
-	h3,h4,
-	h2,h4,
+	h1, h2,
+	h2, h3,
+	h2, h4,
+	h3, h4,
 
-	h4,right12,
-	right12,right11,
-	right11,right10,
-	right10,right9,
+	h3, hip0,
+	h4, hip0,
 
-	hip0,leg16,
-	leg16,leg15,
-	leg15,leg14,
-	leg14,leg13,
+	h4, right12,
+	right12, right11,
+	right11, right10,
+	right10, right9,
 
-	hip0,leg20,
-	leg20,leg19,
-	leg19,leg18,
-	leg18,leg17
-	 
+	hip0, leg16,
+	leg16, leg15,
+	leg15, leg14,
+	leg14, leg13,
+
+	hip0, leg20,
+	leg20, leg19,
+	leg19, leg18,
+	leg18, leg17
+
 };
-
-

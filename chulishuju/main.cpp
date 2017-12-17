@@ -375,7 +375,8 @@ void  creatGroundTruthFeature(int actionBegin, int actionEnd,
 //
 void  creatClusterFeature(int actionBegin, int actionEnd, 
 	int peopleBegin, int peopleEnd,
-	int indexBegin,int indexEnd)
+	int indexBegin,int indexEnd,
+	int dim=3)
 {
 	//string prefix = "E:\\laboratory\\dataset\\synthesisdata\\finalskeletonFEATUREPOINT\\results";
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
@@ -406,15 +407,23 @@ void  creatClusterFeature(int actionBegin, int actionEnd,
 
 				ofstream of(p2);
 				int label = action;
-				for (int i = 0; i < JULEI_line_Num; i++)
-				{
-					of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-						<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-						<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] <<endl;
 
-					fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-						<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-						<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
+				if (dim == 3)
+				{
+					for (int i = 0; i < JULEI_line_Num; i++)
+					{
+						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
+
+						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
+					}
+				}
+				if (dim ==4)
+				{
+
 				}
 				of << label << endl;
 				fea << label << endl;
@@ -817,14 +826,14 @@ int main()
 	//adjustClusterPoint();
 	//jiaozhun();
 	//creatClusterFeature2(7,7,1,1,0,299);//这个是新特征 
-//	creatClusterFeature(7, 7, 1, 1, 0, 299);
+	creatClusterFeature(7, 7, 1, 1, 0, 299,4);//最后一个参数是代表是几个特征点 默认3维
 
 	//creatGroundTruthFeature(7, 7, 1, 1, 0, 299);
 	int k = 11;
 	int testindex = 50;
 	//testknn(false, k, testindex, 7, 7, 1, 1, 0, 299);//true是聚类特征
 	
-	get3dFea(7, 7, 1, 1, 200, 299,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
+//	get3dFea(7, 7, 1, 1, 200, 299,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
 	//get3dGT();//关节点3维坐标
 	system("PAUSE");
 	return 0;
