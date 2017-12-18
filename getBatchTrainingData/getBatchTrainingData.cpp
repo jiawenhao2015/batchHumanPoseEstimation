@@ -222,26 +222,26 @@ int getKinectTrainingData()
 int geXuniTrainingData()
 {
 
-	ofstream allFeatureFile("E:/trainprocess/train/xunishujushixiong/allfeatures.txt");
-	string featurePathPrefix("E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/");
+	ofstream allFeatureFile("E:/trainprocess/train/xunishujushixiong/allfeatures3.txt");
+	string featurePathPrefix("E:/laboratory/dataset/synthesisdata/mypartresults/");
 	char featurePath[128];
 
-	ofstream allGroundTruthFile("E:/trainprocess/train/xunishujushixiong/allGroundTruthFile.txt");
+	ofstream allGroundTruthFile("E:/trainprocess/train/xunishujushixiong/allGroundTruthFile3.txt");
 	string groundTruthPathPrefix("E:/laboratory/dataset/synthesisdata/bvhtransformdepthacquistion/");
 	char groundTruthPath[128];
 	
 
 	//关节点之间距离的groundtruth
-	ofstream allJointsDistanceFile("E:/trainprocess/train/xunishujushixiong/allJointsDisFile.txt");
+	ofstream allJointsDistanceFile("E:/trainprocess/train/xunishujushixiong/allJointsDisFile3.txt");
 
-	for (int action = 4; action <= 5; action++)
+	for (int action = 7; action <= 7; action++)
 	{
-		for (int people = 1; people <= 4; people++)
+		for (int people = 1; people <= 1; people++)
 		{
-			for (int frame = 0; frame <= 49; frame++)
+			for (int frame = 0; frame <= 299; frame++)
 			{
 				if (frame % index == 0)continue;
-				sprintf_s(featurePath, "action%d/people%d/%4d/clusterpoint.txt", action, people, frame);
+				sprintf_s(featurePath, "action%d/people%d/frame%d/featurePoints.txt", action, people, frame);
 				sprintf_s(groundTruthPath, "action%d/people%d/groundTruth%d.txt",action,people, frame);
 				
 				cout << featurePathPrefix + featurePath << endl;
@@ -403,8 +403,8 @@ void testKinectTrainingData()
 int main()
 {
 	index = 5;
-	//geXuniTrainingData();
-	getKinectTrainingData1();
+	geXuniTrainingData();
+	//getKinectTrainingData1();
 	//testKinectTrainingData();
 
 	return 0;

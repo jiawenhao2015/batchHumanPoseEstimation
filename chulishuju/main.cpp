@@ -382,7 +382,7 @@ void  creatClusterFeature(int actionBegin, int actionEnd,
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin<<"-"<<actionEnd << "bsm_all_feature.txt";//最后一维是标签
+	ss << prefix << "\\" << actionBegin<<"-"<<actionEnd << "bsm_all_feature4.txt";//最后一维是标签
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -396,8 +396,8 @@ void  creatClusterFeature(int actionBegin, int actionEnd,
 
 				stringstream  ss2, ss3;
 
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\featurePoints3d.txt";				
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\frame" << index <<"\\3dfeature.txt";
+				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";				
+				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index <<"\\3dfeature.txt";
 
 				string p3 = ss3.str();
 				string p2 = ss2.str();
@@ -423,7 +423,16 @@ void  creatClusterFeature(int actionBegin, int actionEnd,
 				}
 				if (dim ==4)
 				{
+					for (int i = 0; i < JULEI4_line_Num; i++)
+					{
+						of << gt2[julei4_line[i * 2]][0] - gt2[julei4_line[i * 2 + 1]][0] << " "
+							<< gt2[julei4_line[i * 2]][1] - gt2[julei4_line[i * 2 + 1]][1] << " "
+							<< gt2[julei4_line[i * 2]][2] - gt2[julei4_line[i * 2 + 1]][2] << endl;
 
+						fea << gt2[julei4_line[i * 2]][0] - gt2[julei4_line[i * 2 + 1]][0] << " "
+							<< gt2[julei4_line[i * 2]][1] - gt2[julei4_line[i * 2 + 1]][1] << " "
+							<< gt2[julei4_line[i * 2]][2] - gt2[julei4_line[i * 2 + 1]][2] << " ";
+					}
 				}
 				of << label << endl;
 				fea << label << endl;
@@ -577,7 +586,7 @@ int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,int testindex
 	int label,n = trainSample.size();
 	map<float, vector<int>>mp;//记录距离与训练集的索引 距离从小到大排列
 
-	ofstream of(prefix+"\\"+to_string(actionBegin)+"-"+to_string(actionEnd)+"distance.txt");
+	ofstream of(prefix+"\\"+to_string(actionBegin)+"-"+to_string(actionEnd)+"distance4.txt");
 
 	for (int i = 0; i < n;i++)
 	{
@@ -634,7 +643,8 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 	string prefix,int row,int col,bool isjulei,
 	int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd)
+	int indexBegin, int indexEnd,
+	int dim=3)
 {	
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
@@ -649,9 +659,15 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 				int m = row, n = col;//虚拟数据groundtruth m = 20 , n=3
 				stringstream ss;
 
-				if (isjulei)ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature.txt";
-				else ss << prefix << "\\action" << action << "\\people" << people << "\\3dfeature"<<index<<".txt";
-				
+				if (isjulei)
+				{
+					if(dim==3)ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature.txt";
+					else ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
+				}
+				else//关节点
+				{
+					ss << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
+				}
 				
 				
 				string path = ss.str();
@@ -686,7 +702,8 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 void testknn(bool isjulei, int k, int startindex,
 	int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd)
+	int indexBegin, int indexEnd,
+	int dim=3)
 {
 	vector<Mat> trainSample, testSample;
 	vector<int> trainLabel, testLabel;
@@ -698,10 +715,19 @@ void testknn(bool isjulei, int k, int startindex,
 
 	if (isjulei)//聚类特征点
 	{
-		prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-		row = 1, col = 66;//groundtruth是60=20*3列  聚类特征是22*3=66
-		matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7julei.txt", col, 5, false, label);
-		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin,actionEnd,peopleBegin,peopleEnd,indexBegin,indexEnd);
+		prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";		
+		if (dim==3)
+		{
+			row = 1, col = 66;//groundtruth是60=20*3列  聚类特征是22*3=66
+			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7julei.txt", col, 5, false, label);
+			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
+		}
+		if (dim == 4)
+		{
+			row = 1, col = 27*3;//groundtruth是60=20*3列  聚类特征是22*3=66 
+			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7julei4.txt", col, 5, false, label);
+			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd,4);
+		}		
 	}
 	else
 	{
@@ -710,7 +736,6 @@ void testknn(bool isjulei, int k, int startindex,
 		matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7guanjie.txt", col, 5, false, label);
 		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false,actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
 	}
-
 
 	for (int i = startindex; i < testSample.size(); i++)
 	{
@@ -826,12 +851,12 @@ int main()
 	//adjustClusterPoint();
 	//jiaozhun();
 	//creatClusterFeature2(7,7,1,1,0,299);//这个是新特征 
-	creatClusterFeature(7, 7, 1, 1, 0, 299,4);//最后一个参数是代表是几个特征点 默认3维
+	//creatClusterFeature(7, 7, 1, 1, 0, 299,4);//最后一个参数是代表是几个特征点 默认3维
 
 	//creatGroundTruthFeature(7, 7, 1, 1, 0, 299);
 	int k = 11;
-	int testindex = 50;
-	//testknn(false, k, testindex, 7, 7, 1, 1, 0, 299);//true是聚类特征
+	int testindex = 120;
+	testknn(true, k, testindex, 7, 7, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	
 //	get3dFea(7, 7, 1, 1, 200, 299,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
 	//get3dGT();//关节点3维坐标

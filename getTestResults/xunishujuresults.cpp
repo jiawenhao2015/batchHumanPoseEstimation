@@ -28,7 +28,7 @@ using namespace cv;
 
 #define		PROJECT_MAT		"E:/trainprocess/train/Amatrix.txt"		//映射矩阵路径
 #define		JOINTS_NUM   15     //关节点groundtruth个数
-#define		FEATURE_NUM  16    //特征点个数
+#define		FEATURE_NUM  21    //特征点个数 21
 
 #define		START		0		//测试起始帧索引
 #define		END 		150		//测试结束帧索引
@@ -108,7 +108,7 @@ void ComputeJoint(string matrixPath)
 	char  Path[128];
 	for (int action = actionStart; action <= actionEnd; action++)
 	{
-		for (int people = 1; people <= 4;people++)
+		for (int people = 1; people <= 1;people++)
 		{
 			for (int frame = frameStart; frame <= frameEnd; frame++)
 			{
@@ -116,9 +116,9 @@ void ComputeJoint(string matrixPath)
 				if (frame % index != 0)continue;
 
 				ss.str("");
-				ss << "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action"<< action 
-					<< "/people"<<people<<"/" << frame << "/clusterpoint.txt";
-				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action%d/people%d/%4d/clusterpoint.txt",action,people, frame);
+				ss << "E:/laboratory/dataset/synthesisdata/mypartresults/action"<< action 
+					<< "/people"<<people<<"/frame" << frame << "/featurePoints.txt";
+				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d/featurePoints.txt",action,people, frame);
 				ifstream isexist(Path);
 				if (!isexist.is_open())continue;//当前不存在 
 
@@ -129,11 +129,11 @@ void ComputeJoint(string matrixPath)
 
 
 				ss.str("");
-				ss << "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action" << action
-					<< "/people" << people << "/" << frame << "/guessPoints.txt";	
+				ss << "E:/laboratory/dataset/synthesisdata/mypartresults/action" << action
+					<< "/people" << people << "/newframe" << frame << "/guessPoints.txt";	
 
-				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action%d/people%d/%4d/guessPoints.txt", action, people, frame);
-				//ifstream isexist(Path);
+				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d/guessPoints.txt", action, people, frame);
+				
 
 				ofstream of(Path);
 				for (int i = 0; i < JOINTS_NUM; i++)//输出到本地 四舍五入
@@ -471,7 +471,7 @@ void saveTestResults(bool flag)
 	char Path[128];
 	for (int action = actionStart; action <= actionEnd; action++)
 	{
-		for (int people = 1; people <= 4; people++)//
+		for (int people = 1; people <= 1; people++)//
 		{
 			for (int frame = frameStart; frame <= frameEnd; frame++)
 			{
@@ -490,13 +490,13 @@ void saveTestResults(bool flag)
 				sserror.str("");
 
 				string groundTruthPathPrefix("E:/laboratory/dataset/synthesisdata/bvhtransformdepthacquistion/");
-				string featurePathPrefix("E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/");
+				string featurePathPrefix("E:/laboratory/dataset/synthesisdata/mypartresults/");
 
 				ssgroundtruth << groundTruthPathPrefix <<"action"<< action << "/people" <<people<<"/groundTruth"<<frame <<".txt";
 				if (!readXuNiGroundTruth(ssgroundtruth.str(), X, Y))continue;
 
-				sstest << featurePathPrefix << "action" << action << "/people" << people << "/" <<frame <<"/guessPoints.txt";
-				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action%d/people%d/%4d/guessPoints.txt", action, people, frame);
+				sstest << featurePathPrefix << "action" << action << "/people" << people << "/newframe" <<frame <<"/guessPoints.txt";
+				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d/guessPoints.txt", action, people, frame);
 				if (!readGuessFile(Path, myX, myY))continue;
 
 				sspointcloud << "E:/laboratory/dataset/synthesisdata/bvhtransformdepthacquistion/action" << action << "/people" <<people<<"/output"<<frame <<".txt";
@@ -517,8 +517,8 @@ void saveTestResults(bool flag)
 
 
 				//计算绝对误差 xiangsu像素数 保存到本地
-				sserror << featurePathPrefix << "action" << action << "/people" << people << "/frame" << frame << "/abserror.txt";
-				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action%d/people%d/%4d/abserror.txt", action, people, frame);
+				sserror << featurePathPrefix << "action" << action << "/people" << people << "/newframe" << frame << "/abserror.txt";
+				sprintf_s(Path, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d/abserror.txt", action, people, frame);
 				ComputeRealError(src, X, Y, myX, myY, Path, temp);
 			}
 		}
@@ -680,12 +680,12 @@ void computAllFinalError(string matrixName)
 	
 	
 	
-	string featurePathPrefix("E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/");
+	string featurePathPrefix("E:/laboratory/dataset/synthesisdata/mypartresults/");
 
 
 	for (int action = actionStart; action <= actionEnd; action++)
 	{
-		for (int people = 1; people <= 4; people++)//
+		for (int people = 1; people <= 1; people++)//
 		{
 			for (int frame = frameStart; frame <= frameEnd; frame++)
 			{
@@ -693,7 +693,7 @@ void computAllFinalError(string matrixName)
 
 				stringstream ss;
 				ss << featurePathPrefix << "action" << action << "/people" << people << "/" << frame << "/abserror.txt";
-				sprintf_s(path, "E:/laboratory/dataset/synthesisdata/shixiongSCRLRESULTS/action%d/people%d/%4d/abserror.txt", action, people, frame);
+				sprintf_s(path, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d/abserror.txt", action, people, frame);
 
 				ifstream isexist(path);
 				if (!isexist.is_open())continue;//当前不存在 
@@ -894,8 +894,8 @@ int xunishuju()
 	vector<string>matnames;	 
 	checkMatrix(matnames);
 
-	actionStart = 4, actionEnd = 4;
-	frameStart = 0, frameEnd = 49;
+	actionStart = 7, actionEnd = 7;
+	frameStart = 0, frameEnd = 299;
 	index = 5;
 	for (string name : matnames)
 	{
@@ -1406,12 +1406,12 @@ void mymerge2()
 
 int main()
 {
-	//xunishuju();
+	xunishuju();
 	//kinect();
 
 	//mymerge2();
 
-	temp4();
+	//temp4();
 	//showKinectResult();
 	//testKinectData();
 	system("PAUSE");
