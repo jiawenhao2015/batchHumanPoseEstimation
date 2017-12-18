@@ -1345,10 +1345,13 @@ void mymerge()
 	string  path = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion\\action7\\people1\\";
 	
 	vector<Mat>input(20);
+
+	vector<int> picindex = { 71050, 71051, 71049, 71052, 71053, 71048, 71054, 71047, 71055, 71056,
+		71050, 71048, 71052, 71049, 71047, 71046, 71051, 71045, 71053, 71062 };
 	for (int i = 0; i < 20;i++)
 	{
 		stringstream ss;
-		ss << path << i << ".jpg";
+		ss << path << picindex[i]%1000 << ".jpg";
 		input[i] = imread(ss.str());		
 	}
 
@@ -1368,7 +1371,7 @@ void mymerge()
 	}
 
 	imshow("merge", mergefinal);
-	imwrite("merge.jpg", mergefinal);
+	imwrite("merge3.jpg", mergefinal);
 
 	waitKey(0);
 }
@@ -1406,10 +1409,10 @@ void mymerge2()
 
 int main()
 {
-	xunishuju();
+	//xunishuju();
 	//kinect();
 
-	//mymerge2();
+	mymerge();
 
 	//temp4();
 	//showKinectResult();
