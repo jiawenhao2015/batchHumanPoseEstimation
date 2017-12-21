@@ -54,13 +54,13 @@ bool dirExists(const std::string& dirName_in)
 void run(int action, int people, int frame);
 int main()
 {
-	for (int aciton = 7; aciton <= 7; aciton++)
+	for (int aciton = 8; aciton <= 9; aciton++)
 	{
 		for (int people = 1; people <= 1; people++)
 		{
-			int start;
-			cin >> start;
-			for (int frame = start; frame <= 246; frame++)
+			int start = 0;
+			//cin >> start;
+			for (int frame = start; frame <= 199; frame++)
 			{
 				run(aciton, people, frame);
 			}
@@ -86,7 +86,7 @@ void run(int action, int people, int frame)
 	cout << inputPath << endl;
 	
 	char outputPath[128];
-	sprintf_s(outputPath, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d", action, people, frame);
+	sprintf_s(outputPath, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/frame%d", action, people, frame);
 	//sprintf_s(outputPath, "E:/laboratory/dataset/realdataresults/model%d/action%d/frame%d", model, action, frame);
 	//sprintf_s(outputPath, "E:/laboratory/RecordProcess/RecordProcess/output/model%d/action%d/frame%d", model, action, frame);
 
@@ -114,7 +114,7 @@ void run(int action, int people, int frame)
 			getchar();
 		}
 	}
-	sprintf_s(outputPath, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/newframe%d", action, people, frame);
+	sprintf_s(outputPath, "E:/laboratory/dataset/synthesisdata/mypartresults/action%d/people%d/frame%d", action, people, frame);
 	//sprintf_s(outputPath, "E:/laboratory/dataset/realdataresults/model%d/action%d/frame%d", model, action, frame);
 	//sprintf_s(outputPath, "E:/laboratory/RecordProcess/RecordProcess/output/model%d/action%d/frame%d", model, action, frame);
 	
@@ -133,7 +133,7 @@ void run(int action, int people, int frame)
 	Mat depthData(HEIGHT, WIDTH, CV_64FC3);
 
 	const int downSampling = 1;//downsampling=1
-	const int clusterNumber = 4; //定义类内聚类个数
+	const int clusterNumber = 3; //定义类内聚类个数
 	CvPoint2D32f gujiadian[5][clusterNumber];//存储,左右手和左右脚加头，聚类个几何中心点3
 	int gujiadian2[5][clusterNumber];
 	ImageShow ShowTool;
@@ -320,9 +320,9 @@ void run(int action, int people, int frame)
 	Skeleton abc;
 	int vvv = Load.Search(dijkstra.Vertex[0][0], dijkstra.Vertex[0][1], src);
 	 
-//	abc.ProcessingSkeleton(photo, dijkstra.Dist, gujiadian, gujiadian2, dijkstra.Vertex, vvv, dijkstra.lefthand, dijkstra.leftfoot, dijkstra.righthand, dijkstra.rightfoot, Skeleton_point, clusterNumber);//$$$$$$$$$$$$$$$
+	abc.ProcessingSkeleton(photo, dijkstra.Dist, gujiadian, gujiadian2, dijkstra.Vertex, vvv, dijkstra.lefthand, dijkstra.leftfoot, dijkstra.righthand, dijkstra.rightfoot, Skeleton_point, clusterNumber);//$$$$$$$$$$$$$$$
 
-	abc.ProcessingSkeleton4(photo, dijkstra.Dist, gujiadian, gujiadian2, dijkstra.Vertex, vvv, dijkstra.lefthand, dijkstra.leftfoot, dijkstra.righthand, dijkstra.rightfoot, Skeleton_point, clusterNumber);//$$$$$$$$$$$$$$$
+//	abc.ProcessingSkeleton4(photo, dijkstra.Dist, gujiadian, gujiadian2, dijkstra.Vertex, vvv, dijkstra.lefthand, dijkstra.leftfoot, dijkstra.righthand, dijkstra.rightfoot, Skeleton_point, clusterNumber);//$$$$$$$$$$$$$$$
 
 
 	clock_end = clock();
