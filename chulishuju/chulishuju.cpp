@@ -203,15 +203,18 @@ void Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 }
 //读入2维图像坐标 读入5维groundtruth 查找对应3维空间坐标。得到3维groundtruth
 //2017.11.27
-int get3dGT()
+int get3dGT(int actionBegin, int actionEnd,
+	int peopleBegin, int peopleEnd,
+	int indexBegin, int indexEnd)
 {	
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
-	for (int action = 7; action <= 7;action++)
+	for (int action = actionBegin; action <= actionEnd; action++)
 	{
-		for (int people = 1; people <= 1;people++)
+		for (int people = peopleBegin; people <= peopleEnd; people++)
 		{
-			for (int index = 251; index <= 299;index++)
+			for (int index = indexBegin; index <= indexEnd; index++)
 			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
 				vector<vector<int>> gt2;
 				map <vector<int>, vector<float>> mp;
 				stringstream ss1,ss2,ss3;
@@ -234,6 +237,18 @@ int get3dGT()
 				{
 					vector<int>tt = gt2[i];
 					vector<float> gt3 = mp[tt];
+					if (gt3.size() == 0)//如果不在点云里面说明关节点不在人体上
+					{
+						cout<<action<<"-----"<<people<<"-----"<< i << "------------不在人体上!" << endl;
+
+						tt[0] += 2;//往右平移2个像素
+						gt3 = mp[tt];
+						if (gt3.size() == 0)
+						{
+							tt[0] -= 4;//不行就往左两个像素
+							gt3 = mp[tt];
+						}
+					}
 					for (int j = 0; j < gt3.size(); j++)
 					{
 						of << gt3[j] << " ";
@@ -345,8 +360,9 @@ void  creatGroundTruthFeature(int actionBegin, int actionEnd,
 			if (people == 3) continue;
 			for (int index = indexBegin; index <= indexEnd; index++)
 			{
-				vector<vector<float>> gt2;
-				
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
+
+				vector<vector<float>> gt2;				
 				stringstream  ss2, ss3;
 
 				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
@@ -696,6 +712,7 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 					testSample.push_back(sample);
 				}
 				//else //train
+				if (index % 10 == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
 				{
 
 					indexmp[trainSample.size()]=action*10000+people*1000+index;
@@ -731,7 +748,7 @@ void testknn(bool isjulei, int k, int startindex,
 		prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";		
 		if (dim==3)
 		{
-			row = 1, col = 66;//groundtruth是60=20*3列  聚类特征是22*3=66
+			row = 1, col = 60;//groundtruth是60=20*3列  聚类特征是22*3=66
 			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7julei.txt", col, 5, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
 		}
@@ -906,15 +923,15 @@ int main()
 	//adjustClusterPoint();
 	//jiaozhun();
 	//creatClusterFeature2(7,7,1,1,0,299);//这个是新特征 实验结果不好 不好使 
-	creatClusterFeature(7, 9, 1, 1, 0, 299,4);//最后一个参数是代表是几个特征点 默认3维
+	//creatClusterFeature(7, 9, 1, 1, 0, 299,4);//最后一个参数是代表是几个特征点 默认3维
 
-	//creatGroundTruthFeature(7, 7, 1, 1, 0, 299);
+//	creatGroundTruthFeature(7, 9, 1, 1, 0, 299);
 	int k = 11;
 	int testindex = 120;
-//	testknn(true, k, testindex, 7, 7, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+	testknn(true, k, testindex, 7, 7, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	
 //	get3dFea(9, 9, 1, 1, 0, 199,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
-//	get3dGT();//关节点3维坐标
+//	get3dGT(9, 9, 1, 1, 0, 199);//关节点3维坐标
 	system("PAUSE");
 	return 0;
 }
