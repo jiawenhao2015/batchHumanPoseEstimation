@@ -633,6 +633,9 @@ int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,int testindex
 	of.close();
 
 
+	//将测试结果保存到txt文件里面
+	ofstream indexfile("E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\index.txt", ios::app);
+
 	cout << "测试帧索引："<<indexmptest[testindex] << endl;
 
 	//输出前k个距离最小的帧
@@ -642,9 +645,11 @@ int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,int testindex
 		{
 			cout << indexmp[it->second[j]] << endl;
 			k--;
+			indexfile << indexmp[it->second[j]] << " ";
 		}		
 	}
-
+	indexfile << endl;
+	indexfile.close();
 	map<int,int>testLabel;//统计label出现次数 
 	for (auto it = mp.begin(); it != mp.end() && k>0;it++)
 	{
@@ -683,6 +688,8 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 			
 			for (int index = indexBegin; index <= indexEnd; index++)
 			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
+
 				int label;
 				Mat sample;
 				int m = row, n = col;//虚拟数据groundtruth m = 20 , n=3
@@ -698,7 +705,6 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 					ss << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
 				}
 				
-				
 				string path = ss.str();
 				sample = InitMat(path, m, n, true, label);
 				
@@ -712,7 +718,7 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 					testSample.push_back(sample);
 				}
 				//else //train
-				if (index % 10 == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
+				if (index % 5 == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
 				{
 
 					indexmp[trainSample.size()]=action*10000+people*1000+index;
@@ -749,13 +755,13 @@ void testknn(bool isjulei, int k, int startindex,
 		if (dim==3)
 		{
 			row = 1, col = 60;//groundtruth是60=20*3列  聚类特征是22*3=66
-			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7julei.txt", col, 5, false, label);
+			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-9julei.txt", col, 5, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
 		}
 		if (dim == 4)
 		{
 			row = 1, col = 27*3;//groundtruth是60=20*3列  聚类特征是22*3=66 
-			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-7julei4.txt", col, 5, false, label);
+			matrix = InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\W_bsm7-9julei.txt", col, 5, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd,4);
 		}		
 	}
@@ -928,7 +934,7 @@ int main()
 //	creatGroundTruthFeature(7, 9, 1, 1, 0, 299);
 	int k = 11;
 	int testindex = 120;
-	testknn(true, k, testindex, 7, 7, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+	testknn(false, k, testindex, 7, 9, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	
 //	get3dFea(9, 9, 1, 1, 0, 199,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
 //	get3dGT(9, 9, 1, 1, 0, 199);//关节点3维坐标

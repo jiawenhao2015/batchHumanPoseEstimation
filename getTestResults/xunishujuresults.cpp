@@ -1157,12 +1157,13 @@ void temp()
 
 	stringstream ss;
 	vector<int>X, Y;
-	for (int action = 4; action <= 4; action++)
+	for (int action = 7; action <= 9; action++)
 	{
 		for (int people = 1; people <= 1; people++)
 		{
-			for (int index = 0; index <= 0; index++)
+			for (int index = 0; index <= 299; index++)
 			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
 				src.clear();
 				X.clear();
 				Y.clear();
@@ -1179,8 +1180,8 @@ void temp()
 				drawJoints(photo, X, Y, 0);
 				
 				ss.str("");
-				ss << index;
-				putText(photo, ss.str(), Point(60, 60), CV_FONT_HERSHEY_SIMPLEX, 2, Scalar(0, 0, 255));
+				ss << index+action*10000+people*1000;
+				putText(photo, ss.str(), Point(240, 40), CV_FONT_HERSHEY_PLAIN, 3, Scalar(0, 0, 255));
 				/*
 				for (int k = 0; k < 6; k++)
 				{
@@ -1342,36 +1343,38 @@ void temp4()
 //20171205
 void mymerge()
 {
-	string  path = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion\\action7\\people1\\";
+	string  path = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion\\";
 	
-	vector<Mat>input(20);
+	int N = 22;
+	vector<Mat>input(N);
 
-	vector<int> picindex = { 71050, 71051, 71049, 71052, 71053, 71048, 71054, 71047, 71055, 71056,
-		71050, 71048, 71052, 71049, 71047, 71046, 71051, 71045, 71053, 71062 };
-	for (int i = 0; i < 20;i++)
+	vector<int> picindex = { 71120, 91190, 71150, 71230, 71130, 71110, 81180, 71140, 81190, 81020, 81010,
+		71120, 71130, 91110, 71210, 71140, 81020, 71220, 71200, 81190, 91120,91180 };
+	for (int i = 0; i < N; i++)
 	{
 		stringstream ss;
-		ss << path << picindex[i]%1000 << ".jpg";
+		ss << path << "action"<<picindex[i]/10000<<"\\people"<<(picindex[i]/1000)%10<< "\\"<<picindex[i]%1000<<".jpg";
+		cout << ss.str() << endl;
 		input[i] = imread(ss.str());		
 	}
 
-	Size bigsize(input[0].cols * 10, input[0].rows*2);//合并后图片size 宽*高
+	Size bigsize(input[0].cols * N/2, input[0].rows*2);//合并后图片size 宽*高
 		
-	vector<Mat>temp(20);
+	vector<Mat>temp(N);
 
 	Mat mergefinal;
 	mergefinal.create(bigsize, CV_MAKETYPE(input[0].depth(), 3));//rgb 3通道
 	mergefinal = Scalar::all(0);
 
-	for (int i = 0; i < 20;i++)
+	for (int i = 0; i < N; i++)
 	{
-		if (i<10)temp[i] = mergefinal(Rect(i*input[0].cols, 0, input[0].cols, input[0].rows));
-		else temp[i] = mergefinal(Rect((i - 10)*input[0].cols, input[0].rows, input[0].cols, input[0].rows));
+		if (i<N/2)temp[i] = mergefinal(Rect(i*input[0].cols, 0, input[0].cols, input[0].rows));
+		else temp[i] = mergefinal(Rect((i - N/2)*input[0].cols, input[0].rows, input[0].cols, input[0].rows));
 		input[i].copyTo(temp[i]); //copy图片到对应位置
 	}
 
 	imshow("merge", mergefinal);
-	imwrite("merge3.jpg", mergefinal);
+	imwrite("71020.jpg", mergefinal);
 
 	waitKey(0);
 }
@@ -1405,8 +1408,6 @@ void mymerge2()
 	waitKey(0);
 }
 
-
-
 int main()
 {
 	//xunishuju();
@@ -1414,7 +1415,7 @@ int main()
 
 	mymerge();
 
-	//temp4();
+	//temp();
 	//showKinectResult();
 	//testKinectData();
 	system("PAUSE");
