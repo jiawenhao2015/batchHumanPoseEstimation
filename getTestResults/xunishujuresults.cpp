@@ -1348,8 +1348,15 @@ void mymerge()
 	int N = 22;
 	vector<Mat>input(N);
 
-	vector<int> picindex = { 71120, 91190, 71150, 71230, 71130, 71110, 81180, 71140, 81190, 81020, 81010,
-		71120, 71130, 91110, 71210, 71140, 81020, 71220, 71200, 81190, 91120,91180 };
+	/*vector<int> picindex = { 71120, 91190, 71150, 71230, 71130, 71110, 81180, 71140, 81190, 81020, 81010,
+		71120, 71130, 91110, 71210, 71140, 81020, 71220, 71200, 81190, 91120,91180 };*/
+	vector<int> picindex;
+	vector<float>floatindex;
+	ReadFile("index.txt", floatindex);
+
+	for (auto f:floatindex)picindex.push_back((int)f);
+	
+
 	for (int i = 0; i < N; i++)
 	{
 		stringstream ss;
@@ -1374,7 +1381,7 @@ void mymerge()
 	}
 
 	imshow("merge", mergefinal);
-	imwrite("71020.jpg", mergefinal);
+	imwrite("91120.jpg", mergefinal);
 
 	waitKey(0);
 }
