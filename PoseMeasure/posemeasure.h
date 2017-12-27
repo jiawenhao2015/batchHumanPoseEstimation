@@ -10,13 +10,27 @@
 #include<map>
 #include <sstream>
 #include"highgui.h"
-
 #include "opencv2/nonfree/nonfree.hpp"    
 #include "opencv2/legacy/legacy.hpp"   
 using namespace std;
 using namespace cv;
 
 //姿态度量相关函数
+
+class FileTool
+{
+public:
+	void ReadmidGT(string matrixPath, vector<vector<float>>& vec);
+	void Write2GT(string matrixPath, vector<vector<int>>& vec);
+	void Write2Fea(string matrixPath, vector<vector<int>>& vec);
+	void Read2GT(string matrixPath, vector<vector<int>>& vec);
+	void Read2Fea(string matrixPath, vector<vector<int>>& vec);
+	void Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp);
+	Mat InitMat(string matrixPath, int m, int n, bool containlabel, int& label);
+
+
+};
+
 class PoseMeasure
 {
 public:
@@ -45,8 +59,9 @@ public:
 	void adjustClusterPoint();
 	void adjustNotOnBody(vector<vector<int>>& gt2);
 	void adjustNotOnBody();
+	void jiaozhun();
 
-
+	FileTool filetool;
 
 	map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。
 	map<int, int>indexmptest;//记录ceshi集里面的帧的索引
@@ -55,17 +70,5 @@ public:
 };
 
 //读写文件相关
-class FileTool
-{
-public:
-	void ReadmidGT(string matrixPath, vector<vector<float>>& vec);
-	void Write2GT(string matrixPath, vector<vector<int>>& vec);
-	void Write2Fea(string matrixPath, vector<vector<int>>& vec);
-	void Read2GT(string matrixPath, vector<vector<int>>& vec);
-	void Read2Fea(string matrixPath, vector<vector<int>>& vec);
-	void Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp);
-	Mat InitMat(string matrixPath, int m, int n, bool containlabel, int& label);
-	void jiaozhun();
-	
-};
+
 #endif

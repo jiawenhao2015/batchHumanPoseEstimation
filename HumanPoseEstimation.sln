@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calibrationSkeleton", "cali
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chulishuju", "chulishuju\chulishuju.vcxproj", "{7BD33AE9-208F-45A7-95D7-F72045304C5C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PoseMeasure", "PoseMeasure\PoseMeasure.vcxproj", "{669BE5E6-72DB-4779-A182-93461ECF1616}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -87,6 +89,16 @@ Global
 		{7BD33AE9-208F-45A7-95D7-F72045304C5C}.Release|Win32.ActiveCfg = Release|Win32
 		{7BD33AE9-208F-45A7-95D7-F72045304C5C}.Release|Win32.Build.0 = Release|Win32
 		{7BD33AE9-208F-45A7-95D7-F72045304C5C}.Release|x64.ActiveCfg = Debug|x64
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Debug|Win32.ActiveCfg = Debug|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Debug|Win32.Build.0 = Debug|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Debug|x64.ActiveCfg = Debug|x64
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Release|Win32.ActiveCfg = Release|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Release|Win32.Build.0 = Release|Win32
+		{669BE5E6-72DB-4779-A182-93461ECF1616}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
