@@ -22,7 +22,7 @@ using namespace cv;
 
 
 map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。
-map<int, int>indexmptest;//记录训练集里面的帧的索引
+map<int, int>indexmptest;//记录ceshi集里面的帧的索引
 
 //读入一个txt groundtruth 3维坐标的 返回一个数组
 //2017.11.27
@@ -718,7 +718,7 @@ void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 					testSample.push_back(sample);
 				}
 				//else //train
-				if (index % 5 == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
+				if (index % 10 == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
 				{
 
 					indexmp[trainSample.size()]=action*10000+people*1000+index;
@@ -773,15 +773,29 @@ void testknn(bool isjulei, int k, int startindex,
 		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false,actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
 	}
 
-	for (int i = startindex; i < testSample.size(); i++)
+
+	//startindex 是指数组下标索引  现在需要转换一下 比如输入测试帧直接是图片名称而不是在数组中的下标了
+
+	int indexInVec = 0;
+	for (auto it = indexmptest.begin(); it != indexmptest.end();it++)
 	{
-		label = knn(trainSample, trainLabel, testSample[i],i, matrix, k,prefix,actionBegin,actionEnd);
-		if (label == testLabel[i])
+		if (it->second == startindex)
 		{
-			correct++; 
+			indexInVec = it->first;
 		}
 	}
-	cout << correct << "/" << testSample.size() << endl;
+	knn(trainSample, trainLabel, testSample[indexInVec], indexInVec, matrix, k, prefix, actionBegin, actionEnd);
+
+
+//	for (int i = startindex; i < testSample.size(); i++)
+//	{
+//		label = knn(trainSample, trainLabel, testSample[i],i, matrix, k,prefix,actionBegin,actionEnd);
+//		if (label == testLabel[i])
+//		{
+//			correct++; 
+//		}
+//	}
+//	cout << correct << "/" << testSample.size() << endl;
 }
 
 
@@ -933,8 +947,8 @@ int main()
 
 //	creatGroundTruthFeature(7, 9, 1, 1, 0, 299);
 	int k = 11;
-	int testindex = 120;
-	testknn(false, k, testindex, 7, 9, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+	int testindex = 91055;
+	testknn(true, k, testindex, 7, 9, 1, 1, 0, 299,4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	
 //	get3dFea(9, 9, 1, 1, 0, 199,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
 //	get3dGT(9, 9, 1, 1, 0, 199);//关节点3维坐标

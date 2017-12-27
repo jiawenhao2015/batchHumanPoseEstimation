@@ -1381,7 +1381,7 @@ void mymerge()
 	}
 
 	imshow("merge", mergefinal);
-	imwrite("91120.jpg", mergefinal);
+	imwrite("91055.jpg", mergefinal);
 
 	waitKey(0);
 }
