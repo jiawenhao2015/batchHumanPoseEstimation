@@ -40,10 +40,11 @@ public:
 	void  creatClusterFeature(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 	void  creatClusterFeature2(int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,int indexBegin, int indexEnd);
 	void  creatClusterFeature3(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
+	void  creatClusterFeature4(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 
 	void Normalization(Mat& mat);
 	int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
-		Mat& matrix, int k, string prefix, int actionBegin, int actionEnd);
+		Mat& matrix, int k, string prefix, int actionBegin, int actionEnd, string matrixName);
 	void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 		vector<int>& trainLabel, vector<int>& testLabel,
 		string prefix, int row, int col, bool isjulei,
@@ -51,11 +52,8 @@ public:
 		int peopleBegin, int peopleEnd,
 		int indexBegin, int indexEnd,
 		int dim = 3);
-	void testknn(bool isjulei, int k, int startindex,
-		int actionBegin, int actionEnd,
-		int peopleBegin, int peopleEnd,
-		int indexBegin, int indexEnd,
-		int dim = 3);
+	void testknn(bool isjulei, int k, int startindex,int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,	int indexBegin, int indexEnd,
+		string matrixName, int col,int dim = 3);
 	int minDistance(vector<int>&input, vector<vector<int>>& gt2, vector<bool>&flag);
 	void adjustClusterPoint(vector<vector<int>>& gt2);
 	void adjustClusterPoint();
