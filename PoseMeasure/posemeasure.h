@@ -39,6 +39,8 @@ public:
 	void  creatGroundTruthFeature(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd);
 	void  creatClusterFeature(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 	void  creatClusterFeature2(int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,int indexBegin, int indexEnd);
+	void  creatClusterFeature3(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
+
 	void Normalization(Mat& mat);
 	int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
 		Mat& matrix, int k, string prefix, int actionBegin, int actionEnd);
@@ -60,6 +62,13 @@ public:
 	void adjustNotOnBody(vector<vector<int>>& gt2);
 	void adjustNotOnBody();
 	void jiaozhun();
+
+
+	float EucDis(vector<float>&a, vector<float>&b);
+	vector<float> NormalizationUnit(vector<float>&a);
+
+
+
 
 	FileTool filetool;
 

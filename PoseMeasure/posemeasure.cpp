@@ -920,3 +920,103 @@ void PoseMeasure::adjustNotOnBody()
 }
 
 
+//求两个三维点欧式距离
+float PoseMeasure::EucDis(vector<float>&a, vector<float>&b)
+{
+	float ans =0;
+	for (int i = 0; i < 3;i++)ans += abs(a[i] - b[i])*abs(a[i] - b[i]);	
+	return ans;
+}
+//单位化向量
+vector<float>  PoseMeasure::NormalizationUnit(vector<float>&a)
+{
+	vector<float>ret(3,0);
+	float length = 0;
+	for (int i = 0; i < 3;i++)length += a[i] * a[i];
+	for (int i = 0; i < 3; i++)ret[i] = a[i] / sqrt(length);	
+	return ret;
+}
+//构造聚类特征点的   姿态识别特征   
+// 前3维是3维特征 最后一是label   
+//20171227
+//构造聚类特征点的   姿态识别特征  一共22*3=66 +  =   维
+// 前3维是3维特征 最后一个数是label
+
+//
+void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
+	int peopleBegin, int peopleEnd,
+	int indexBegin, int indexEnd,
+	int dim)
+{
+	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+
+	stringstream  ss;
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureNew.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int people = peopleBegin; people <= peopleEnd; people++)
+		{
+			if (people == 3) continue;
+			for (int index = indexBegin; index <= indexEnd; index++)
+			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
+
+				vector<vector<float>> gt2;
+				stringstream   ss3;
+
+				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
+				
+				string p3 = ss3.str();
+			
+
+				cout << p3 << endl;
+				filetool.ReadmidGT(p3, gt2);
+
+			
+				int label = action;
+
+				if (dim == 3)
+				{
+					for (int i = 0; i < JULEI_line_Num; i++)
+					{
+						
+
+						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
+					}
+				}
+				if (dim == 4)
+				{
+					for (int i = 0; i < gt2.size();i++)//每一对聚类点之间距离
+					{
+						for (int j = i + 1; j < gt2.size();j++)
+						{
+							fea << EucDis(gt2[i], gt2[j]) << " ";
+						}
+					}
+
+					for (int i = 0; i < gt2.size(); i++ )//每一对聚类点之间方向
+					{
+						for (int j = i + 1; j < gt2.size(); j++)
+						{
+							vector<float>temp(3,0),norm;
+							for (int k = 0; k < 3;k++)temp[k] = gt2[i][k] - gt2[j][k];								
+							norm = NormalizationUnit(temp);
+							for (int k = 0; k < 3; k++)fea << norm[k]<<" ";							
+						}
+					}
+				}
+				
+				fea << label << endl;
+				
+			}
+		}
+	}
+	fea.close();
+}
+
+
+//之前求的特征 只用到了坐标差 没用到距离
