@@ -594,7 +594,7 @@ void PoseMeasure::Normalization(Mat& mat)
 int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
 	Mat& matrix, int k, string prefix, int actionBegin, int actionEnd, string matrixName)
 {
-	int label, n = trainSample.size();
+	int label=0, n = trainSample.size();
 	map<float, vector<int>>mp;//记录距离与训练集的索引 距离从小到大排列
 
 	ofstream of(prefix + "\\" + to_string(actionBegin) + "-" + to_string(actionEnd) + matrixName+"distance.txt");
@@ -657,10 +657,8 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 	vector<int>& trainLabel, vector<int>& testLabel,
 	string prefix, int row, int col, bool isjulei,
-	int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd,
-	int dim)
+	int actionBegin, int actionEnd,	int peopleBegin, int peopleEnd,
+	int indexBegin, int indexEnd, int jiange,int dim)
 {
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
@@ -689,7 +687,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 
 				string path = ss.str();
 				sample = filetool.InitMat(path, m, n, true, label);
-
+				cout << path << endl;
 				normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//归一化
 
 				//if (index % 10 == 0)//取样做为测试
@@ -700,7 +698,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 					testSample.push_back(sample);
 				}
 				//else //train
-				if (index % 10 == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
+				if (index % jiange == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
 				{
 
 					indexmp[trainSample.size()] = action * 10000 + people * 1000 + index;
@@ -715,11 +713,11 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 	}
 }
 
-//测试一下knn是否跑通 跑正确 
+//测试一下knn是否跑通 跑正确 int jiange 代表多少帧采样 没个10帧还是5帧之类的
 //20171130
 void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd, string matrixName,int col,int dim)
+	int indexBegin, int indexEnd, string matrixName,int col,int jiange,int dim)
 {
 	vector<Mat> trainSample, testSample;
 	vector<int> trainLabel, testLabel;
@@ -736,13 +734,13 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		{
 			//row = 1, col = 60;//groundtruth是60=20*3列  聚类特征是22*3=66
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 5, false, label);
-			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
+			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd,jiange);
 		}
 		if (dim == 4)
 		{
 			//row = 1, col = 27 * 3;//groundtruth是60=20*3列  聚类特征是22*3=66 
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 5, false, label);
-			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, 4);
+			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange, 4);
 		}
 	}
 	else
@@ -750,7 +748,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
 		//row = 1, col = 60;
 		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 5, false, label);
-		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd);
+		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange);
 	}
 
 
@@ -963,17 +961,17 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 				if (action == 8 || action == 9){ if (index >= 200)continue; }
 
 				vector<vector<float>> gt2;
-				stringstream   ss3;
+				stringstream  ss2, ss3;
 
 				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				
+				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
 				string p3 = ss3.str();
-			
+				string p2 = ss2.str();
 
 				cout << p3 << endl;
 				filetool.ReadmidGT(p3, gt2);
 
-			
+				ofstream of(p2);
 				int label = action;
 
 				if (dim == 3)
@@ -983,6 +981,10 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
 							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
 							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
+						
+						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
 					}
 				}
 				if (dim == 4)
@@ -993,6 +995,7 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 						{
 							fea << EucDis(gt2[i], gt2[j]) << " ";
 							count++;
+							of << EucDis(gt2[i], gt2[j]) <<endl;
 						}
 					}
 					
@@ -1003,11 +1006,12 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 							vector<float>temp(3,0),norm;
 							for (int k = 0; k < 3;k++)temp[k] = gt2[i][k] - gt2[j][k];								
 							norm = NormalizationUnit(temp);
-							for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; }
+							for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] <<endl; }
 						}
 					}
 				}
-				
+				of << label << endl;
+				of.close();
 				fea << label << endl;
 				count++;
 				//cout << "----------------------------" << count << "----------------------------" << endl;
@@ -1050,15 +1054,18 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 				if (action == 8 || action == 9){ if (index >= 200)continue; }
 
 				vector<vector<float>> gt2;
-				stringstream   ss3;
+				stringstream  ss2, ss3;
 
 				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
+				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
 
 				string p3 = ss3.str();
+				string p2 = ss2.str();
 
 				cout << p3 << endl;
 				filetool.ReadmidGT(p3, gt2);
 
+				ofstream of(p2);
 				int label = action;
 
 				if (dim == 3)
@@ -1068,6 +1075,10 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
 							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
 							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
+
+						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
 					}
 				}
 				if (dim == 4)
@@ -1075,7 +1086,8 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 					for (int i = 0; i < JULEI4_line_Num; i++)//连线距离
 					{
 						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2+1]]) << " ";
-						count++;						
+						count++;
+						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) <<endl;
 					}
 					for (int i = 0; i < JULEI4_line_Num; i++)//连线方向
 					{
@@ -1083,11 +1095,13 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 						vector<float>temp(3, 0), norm;
 						for (int k = 0; k < 3; k++)temp[k] = gt2[julei4_line[i * 2]][k] - gt2[julei4_line[i * 2 + 1]][k];
 						norm = NormalizationUnit(temp);
-						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; }
+						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] <<endl; }
 					}
 				}
 
 				fea << label << endl;
+				of << label << endl;
+				of.close();
 				count++;
 				cout << "----------------------------" << count << "----------------------------" << endl;
 				count = 0;

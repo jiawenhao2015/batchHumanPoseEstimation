@@ -48,12 +48,10 @@ public:
 	void getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 		vector<int>& trainLabel, vector<int>& testLabel,
 		string prefix, int row, int col, bool isjulei,
-		int actionBegin, int actionEnd,
-		int peopleBegin, int peopleEnd,
-		int indexBegin, int indexEnd,
-		int dim = 3);
+		int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,
+		int indexBegin, int indexEnd,int jiange,int dim = 3);
 	void testknn(bool isjulei, int k, int startindex,int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,	int indexBegin, int indexEnd,
-		string matrixName, int col,int dim = 3);
+		string matrixName, int col, int jiange, int dim = 3);
 	int minDistance(vector<int>&input, vector<vector<int>>& gt2, vector<bool>&flag);
 	void adjustClusterPoint(vector<vector<int>>& gt2);
 	void adjustClusterPoint();
