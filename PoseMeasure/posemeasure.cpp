@@ -1,14 +1,14 @@
-/*
-1.´¦ÀíĞéÄâÊı¾İ Éú³É´¿3Î¬×ø±ê groundtruth
-2.¹¹ÔìÓÃÓÚ×ËÌ¬Ê¶±ğµÄÌØÕ÷
-3.Ôö¼Ó×ËÌ¬ÌØÕ÷Î¬¶È¡£
+ï»¿/*
+1.å¤„ç†è™šæ‹Ÿæ•°æ® ç”Ÿæˆçº¯3ç»´åæ ‡ groundtruth
+2.æ„é€ ç”¨äºå§¿æ€è¯†åˆ«çš„ç‰¹å¾
+3.å¢åŠ å§¿æ€ç‰¹å¾ç»´åº¦ã€‚
 */
 
 
 #include "posemeasure.h"
 #include "common.h"
 
-//¶ÁÈëÒ»¸ötxt groundtruth 3Î¬×ø±êµÄ ·µ»ØÒ»¸öÊı×é
+//è¯»å…¥ä¸€ä¸ªtxt groundtruth 3ç»´åæ ‡çš„ è¿”å›ä¸€ä¸ªæ•°ç»„
 //2017.11.27
 void FileTool::ReadmidGT(string matrixPath, vector<vector<float>>& vec)
 {
@@ -26,7 +26,7 @@ void FileTool::ReadmidGT(string matrixPath, vector<vector<float>>& vec)
 	}
 	else
 	{
-		cout << "²»ÄÜ´ò¿ªÎÄ¼ş£¡" << matrixPath.c_str() << endl;
+		cout << "ä¸èƒ½æ‰“å¼€æ–‡ä»¶ï¼" << matrixPath.c_str() << endl;
 		return;
 	}
 	aVec.pop_back(), bVec.pop_back(), cVec.pop_back();
@@ -43,7 +43,7 @@ void FileTool::ReadmidGT(string matrixPath, vector<vector<float>>& vec)
 
 vector<string> JOINTS = { "hip", "chest", "neck", "lShldr", "lForeArm", "lHand", "rShldr", "rForeArm", "rHand", "lThigh", "lShin", "lFoot", "rThigh", "rShin", "rFoot" };
 
-//Ğ´Ò»¸ögroundtruth
+//å†™ä¸€ä¸ªgroundtruth
 void FileTool::Write2GT(string matrixPath, vector<vector<int>>& vec)
 {
 	ofstream matrixFile(matrixPath);
@@ -57,7 +57,7 @@ void FileTool::Write2GT(string matrixPath, vector<vector<int>>& vec)
 	return;
 }
 
-//Ğ´¾ÛÀàÌØÕ÷µã
+//å†™èšç±»ç‰¹å¾ç‚¹
 //20171217
 void FileTool::Write2Fea(string matrixPath, vector<vector<int>>& vec)
 {
@@ -71,7 +71,7 @@ void FileTool::Write2Fea(string matrixPath, vector<vector<int>>& vec)
 	return;
 }
 
-//¶ÁÈëÒ»¸ötxt groundtruth ¶şÎ¬×ø±êµÄ ·µ»ØÒ»¸öÊı×é
+//è¯»å…¥ä¸€ä¸ªtxt groundtruth äºŒç»´åæ ‡çš„ è¿”å›ä¸€ä¸ªæ•°ç»„
 //2017.11.27
 void FileTool::Read2GT(string matrixPath, vector<vector<int>>& vec)
 {
@@ -79,8 +79,8 @@ void FileTool::Read2GT(string matrixPath, vector<vector<int>>& vec)
 	int x, y, t;
 	string joint;
 
-	vector<int>xVec;//±£´æËùÓĞ×ø±ê
-	vector<int>yVec;//±£´æËùÓĞ×ø±ê
+	vector<int>xVec;//ä¿å­˜æ‰€æœ‰åæ ‡
+	vector<int>yVec;//ä¿å­˜æ‰€æœ‰åæ ‡
 	if (matrixFile.is_open())
 	{
 		while (!matrixFile.eof())
@@ -92,7 +92,7 @@ void FileTool::Read2GT(string matrixPath, vector<vector<int>>& vec)
 	}
 	else
 	{
-		cout << "²»ÄÜ´ò¿ªÎÄ¼ş£¡" << matrixPath.c_str() << endl;
+		cout << "ä¸èƒ½æ‰“å¼€æ–‡ä»¶ï¼" << matrixPath.c_str() << endl;
 		return;
 	}
 	xVec.erase(xVec.end() - 1);
@@ -109,15 +109,15 @@ void FileTool::Read2GT(string matrixPath, vector<vector<int>>& vec)
 	return;
 }
 
-//¶ÁÈëÒ»¸ötxt featurepoint  ¾ÛÀàÌØÕ÷µã ¶şÎ¬×ø±êµÄ   ·µ»ØÒ»¸öÊı×é
+//è¯»å…¥ä¸€ä¸ªtxt featurepoint  èšç±»ç‰¹å¾ç‚¹ äºŒç»´åæ ‡çš„   è¿”å›ä¸€ä¸ªæ•°ç»„
 //2017.12.01
 void FileTool::Read2Fea(string matrixPath, vector<vector<int>>& vec)
 {
 	ifstream matrixFile(matrixPath);
 	int x, y;
 
-	vector<int>xVec;//±£´æËùÓĞ×ø±ê
-	vector<int>yVec;//±£´æËùÓĞ×ø±ê
+	vector<int>xVec;//ä¿å­˜æ‰€æœ‰åæ ‡
+	vector<int>yVec;//ä¿å­˜æ‰€æœ‰åæ ‡
 	if (matrixFile.is_open())
 	{
 		while (!matrixFile.eof())
@@ -129,7 +129,7 @@ void FileTool::Read2Fea(string matrixPath, vector<vector<int>>& vec)
 	}
 	else
 	{
-		cout << "²»ÄÜ´ò¿ªÎÄ¼ş£¡" << matrixPath.c_str() << endl;
+		cout << "ä¸èƒ½æ‰“å¼€æ–‡ä»¶ï¼" << matrixPath.c_str() << endl;
 		return;
 	}
 	xVec.erase(xVec.end() - 1);
@@ -146,7 +146,7 @@ void FileTool::Read2Fea(string matrixPath, vector<vector<int>>& vec)
 	return;
 }
 
-//¶ÁÈëÒ»¸ötxt groundtruth ÎåÎ¬×ø±êµÄ ·µ»ØÒ»¸ömap ¶şÎ¬×ø±ê¶ÔÓ¦µÄ3Î¬×ø±ê
+//è¯»å…¥ä¸€ä¸ªtxt groundtruth äº”ç»´åæ ‡çš„ è¿”å›ä¸€ä¸ªmap äºŒç»´åæ ‡å¯¹åº”çš„3ç»´åæ ‡
 //2017.11.27
 void FileTool::Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 {
@@ -167,7 +167,7 @@ void FileTool::Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 	}
 	else
 	{
-		cout << "²»ÄÜ´ò¿ªÎÄ¼ş£¡" << matrixPath.c_str() << endl;
+		cout << "ä¸èƒ½æ‰“å¼€æ–‡ä»¶ï¼" << matrixPath.c_str() << endl;
 		return;
 	}
 	xVec.pop_back(), yVec.pop_back(), aVec.pop_back(), bVec.pop_back(), cVec.pop_back();
@@ -183,7 +183,7 @@ void FileTool::Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 	}
 	return;
 }
-//¶ÁÈë2Î¬Í¼Ïñ×ø±ê ¶ÁÈë5Î¬groundtruth ²éÕÒ¶ÔÓ¦3Î¬¿Õ¼ä×ø±ê¡£µÃµ½3Î¬groundtruth
+//è¯»å…¥2ç»´å›¾åƒåæ ‡ è¯»å…¥5ç»´groundtruth æŸ¥æ‰¾å¯¹åº”3ç»´ç©ºé—´åæ ‡ã€‚å¾—åˆ°3ç»´groundtruth
 //2017.11.27
 int PoseMeasure::get3dGT(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
@@ -219,15 +219,15 @@ int PoseMeasure::get3dGT(int actionBegin, int actionEnd,
 				{
 					vector<int>tt = gt2[i];
 					vector<float> gt3 = mp[tt];
-					if (gt3.size() == 0)//Èç¹û²»ÔÚµãÔÆÀïÃæËµÃ÷¹Ø½Úµã²»ÔÚÈËÌåÉÏ
+					if (gt3.size() == 0)//å¦‚æœä¸åœ¨ç‚¹äº‘é‡Œé¢è¯´æ˜å…³èŠ‚ç‚¹ä¸åœ¨äººä½“ä¸Š
 					{
-						cout << action << "-----" << people << "-----" << i << "------------²»ÔÚÈËÌåÉÏ!" << endl;
+						cout << action << "-----" << people << "-----" << i << "------------ä¸åœ¨äººä½“ä¸Š!" << endl;
 
-						tt[0] += 2;//ÍùÓÒÆ½ÒÆ2¸öÏñËØ
+						tt[0] += 2;//å¾€å³å¹³ç§»2ä¸ªåƒç´ 
 						gt3 = mp[tt];
 						if (gt3.size() == 0)
 						{
-							tt[0] -= 4;//²»ĞĞ¾ÍÍù×óÁ½¸öÏñËØ
+							tt[0] -= 4;//ä¸è¡Œå°±å¾€å·¦ä¸¤ä¸ªåƒç´ 
 							gt3 = mp[tt];
 						}
 					}
@@ -247,8 +247,8 @@ int PoseMeasure::get3dGT(int actionBegin, int actionEnd,
 
 
 
-//¶ÁÈë2Î¬Í¼Ïñ×ø±ê ¶ÁÈë5Î¬µãÔÆ ²éÕÒ¶ÔÓ¦3Î¬¿Õ¼ä×ø±ê¡£µÃµ½ÌØÕ÷µãÔÚ3Î¬¿Õ¼äÖĞµÄÎ»ÖÃ
-//2017.12.01   17.12.16Ìí¼ÓÒ»¸ö²ÎÊı£¬´ú±íÌØÕ÷µãÎ¬Êı
+//è¯»å…¥2ç»´å›¾åƒåæ ‡ è¯»å…¥5ç»´ç‚¹äº‘ æŸ¥æ‰¾å¯¹åº”3ç»´ç©ºé—´åæ ‡ã€‚å¾—åˆ°ç‰¹å¾ç‚¹åœ¨3ç»´ç©ºé—´ä¸­çš„ä½ç½®
+//2017.12.01   17.12.16æ·»åŠ ä¸€ä¸ªå‚æ•°ï¼Œä»£è¡¨ç‰¹å¾ç‚¹ç»´æ•°
 int PoseMeasure::get3dFea(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
 	int indexBegin, int indexEnd,
@@ -293,15 +293,15 @@ int PoseMeasure::get3dFea(int actionBegin, int actionEnd,
 					vector<int>tt = gt2[i];
 					vector<float> gt3 = mp[tt];
 
-					if (gt3.size() == 0)//Èç¹û²»ÔÚµãÔÆÀïÃæËµÃ÷ ÌØÕ÷µã²»ÔÚÈËÌåÉÏ
+					if (gt3.size() == 0)//å¦‚æœä¸åœ¨ç‚¹äº‘é‡Œé¢è¯´æ˜ ç‰¹å¾ç‚¹ä¸åœ¨äººä½“ä¸Š
 					{
-						cout << i << "------------²»ÔÚÈËÌåÉÏ!" << endl;
+						cout << i << "------------ä¸åœ¨äººä½“ä¸Š!" << endl;
 
-						tt[0] += 2;//ÍùÓÒÆ½ÒÆ2¸öÏñËØ
+						tt[0] += 2;//å¾€å³å¹³ç§»2ä¸ªåƒç´ 
 						gt3 = mp[tt];
 						if (gt3.size() == 0)
 						{
-							tt[0] -= 4;//²»ĞĞ¾ÍÍù×óÁ½¸öÏñËØ
+							tt[0] -= 4;//ä¸è¡Œå°±å¾€å·¦ä¸¤ä¸ªåƒç´ 
 							gt3 = mp[tt];
 						}
 					}
@@ -322,8 +322,8 @@ int PoseMeasure::get3dFea(int actionBegin, int actionEnd,
 
 
 
-//¹¹Ôìgroundtruth×ËÌ¬Ê¶±ğÌØÕ÷  Ò»¹²20*3=60Î¬
-//Êä³ö20ĞĞ Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»ÊÇlabel
+//æ„é€ groundtruthå§¿æ€è¯†åˆ«ç‰¹å¾  ä¸€å…±20*3=60ç»´
+//è¾“å‡º20è¡Œ å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€æ˜¯label
 
 void  PoseMeasure::creatGroundTruthFeature(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
@@ -332,7 +332,7 @@ void  PoseMeasure::creatGroundTruthFeature(int actionBegin, int actionEnd,
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature.txt";//×îºóÒ»Î¬ÊÇ±êÇ©
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature.txt";//æœ€åä¸€ç»´æ˜¯æ ‡ç­¾
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -379,8 +379,8 @@ void  PoseMeasure::creatGroundTruthFeature(int actionBegin, int actionEnd,
 	fea.close();
 }
 
-//¹¹Ôì¾ÛÀàÌØÕ÷µãµÄ   ×ËÌ¬Ê¶±ğÌØÕ÷  Ò»¹²22*3=66Î¬
-//Êä³ö22ĞĞ Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»ÊÇlabel
+//æ„é€ èšç±»ç‰¹å¾ç‚¹çš„   å§¿æ€è¯†åˆ«ç‰¹å¾  ä¸€å…±22*3=66ç»´
+//è¾“å‡º22è¡Œ å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€æ˜¯label
 //20171128
 //
 void  PoseMeasure::creatClusterFeature(int actionBegin, int actionEnd,
@@ -392,7 +392,7 @@ void  PoseMeasure::creatClusterFeature(int actionBegin, int actionEnd,
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature4.txt";//×îºóÒ»Î¬ÊÇ±êÇ©
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature4.txt";//æœ€åä¸€ç»´æ˜¯æ ‡ç­¾
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -454,10 +454,10 @@ void  PoseMeasure::creatClusterFeature(int actionBegin, int actionEnd,
 	fea.close();
 }
 
-//¹¹Ôì¾ÛÀàÌØÕ÷µãµÄ   ×ËÌ¬Ê¶±ğÌØÕ÷   
-// Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»ÊÇlabel  3*(5+10) = 45
+//æ„é€ èšç±»ç‰¹å¾ç‚¹çš„   å§¿æ€è¯†åˆ«ç‰¹å¾   
+// å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€æ˜¯label  3*(5+10) = 45
 //20171211
-//ĞÂÌØÕ÷ Ã¿Ò»¸ö²¿Î»Èı¸ö¾ÛÀàÖĞĞÄÔÚÇóÖĞĞÄ ×÷Îª¸Ã²¿Î»ÌØÕ÷
+//æ–°ç‰¹å¾ æ¯ä¸€ä¸ªéƒ¨ä½ä¸‰ä¸ªèšç±»ä¸­å¿ƒåœ¨æ±‚ä¸­å¿ƒ ä½œä¸ºè¯¥éƒ¨ä½ç‰¹å¾
 void  PoseMeasure::creatClusterFeature2(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
 	int indexBegin, int indexEnd)
@@ -466,7 +466,7 @@ void  PoseMeasure::creatClusterFeature2(int actionBegin, int actionEnd,
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature2.txt";//×îºóÒ»Î¬ÊÇ±êÇ©
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature2.txt";//æœ€åä¸€ç»´æ˜¯æ ‡ç­¾
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -489,9 +489,9 @@ void  PoseMeasure::creatClusterFeature2(int actionBegin, int actionEnd,
 				cout << p3 << endl;
 				filetool.ReadmidGT(p3, gt2);
 
-				//Ê×ÏÈ¹¹ÔìÌØÕ÷
+				//é¦–å…ˆæ„é€ ç‰¹å¾
 
-				vector<vector<float>> abcdeo(6, vector<float>(3, 0));//oºÍ5¸ö²¿Î»3Î¬×ø±ê	ÔÙ¿¼ÂÇÓÃ5¸öÖ«¶Ë£¡ÔõÃ´Ñù	
+				vector<vector<float>> abcdeo(6, vector<float>(3, 0));//oå’Œ5ä¸ªéƒ¨ä½3ç»´åæ ‡	å†è€ƒè™‘ç”¨5ä¸ªè‚¢ç«¯ï¼æ€ä¹ˆæ ·	
 				abcdeo[0] = gt2[0];
 				for (int i = 0; i < 3; i++)
 				{
@@ -506,7 +506,7 @@ void  PoseMeasure::creatClusterFeature2(int actionBegin, int actionEnd,
 				{
 					for (int j = 0; j < 3; j++)
 					{
-						fea << abcdeo[i][j] - abcdeo[0][j] << " ";//4Ö«ºÍÍ· ÓëÖĞĞÄµãµÄ¾àÀë 
+						fea << abcdeo[i][j] - abcdeo[0][j] << " ";//4è‚¢å’Œå¤´ ä¸ä¸­å¿ƒç‚¹çš„è·ç¦» 
 					}
 				}
 				for (int i = 1; i <= 5; i++)
@@ -531,13 +531,13 @@ void  PoseMeasure::creatClusterFeature2(int actionBegin, int actionEnd,
 }
 
 
-//¶ÁÈ¡Ò»¸ötxt ·µ»ØÒ»¸öm*nµÄ¾ØÕó ÑµÁ·Êı¾İÀïÃæ°üº¬label ×îºóÒ»¸öÊı×ÖÊÇlabel
+//è¯»å–ä¸€ä¸ªtxt è¿”å›ä¸€ä¸ªm*nçš„çŸ©é˜µ è®­ç»ƒæ•°æ®é‡Œé¢åŒ…å«label æœ€åä¸€ä¸ªæ•°å­—æ˜¯label
 Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& label)
 {
 	ifstream matrixFile(matrixPath);
 	float temp;
 	Mat mat(m, n, CV_32F);
-	vector<float>xVec;//±£´æËùÓĞ×ø±ê
+	vector<float>xVec;//ä¿å­˜æ‰€æœ‰åæ ‡
 	if (matrixFile.is_open())
 	{
 		while (!matrixFile.eof())
@@ -548,13 +548,13 @@ Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& l
 	}
 	else
 	{
-		cout << "²»ÄÜ´ò¿ªÎÄ¼ş£¡" << matrixPath.c_str() << endl;
+		cout << "ä¸èƒ½æ‰“å¼€æ–‡ä»¶ï¼" << matrixPath.c_str() << endl;
 	}
 
 	if (containlabel)
 	{
 		label = xVec.back();
-		xVec.pop_back();//×îºóÒ»¸öÊı×ÖÊÇlabel		
+		xVec.pop_back();//æœ€åä¸€ä¸ªæ•°å­—æ˜¯label		
 	}
 
 	xVec.pop_back();
@@ -570,7 +570,7 @@ Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& l
 
 
 
-//ÌØÕ÷ÏòÁ¿¹éÒ»»¯
+//ç‰¹å¾å‘é‡å½’ä¸€åŒ–
 //20171201
 void PoseMeasure::Normalization(Mat& mat)
 {
@@ -580,22 +580,22 @@ void PoseMeasure::Normalization(Mat& mat)
 	normalize(mat, mat, 1.0, 0.0, NORM_MINMAX);
 }
 
-//knn²Ù×÷ 
-//¶ÁÈëÒ»Ö¡²âÊÔÖ¡ È¥ÑµÁ·¼¯ÀïÃæÇó¾àÀë
+//knnæ“ä½œ 
+//è¯»å…¥ä¸€å¸§æµ‹è¯•å¸§ å»è®­ç»ƒé›†é‡Œé¢æ±‚è·ç¦»
 /*
-1¡¢¼ÆËãÒÑÖªÀà±ğÊı¾İ¼¯ºÏ»ã×ÜµÄµãÓëµ±Ç°µãµÄ¾àÀë
-2¡¢°´ÕÕ¾àÀëµİÔö´ÎĞòÅÅĞò
-3¡¢Ñ¡È¡Óëµ±Ç°µã¾àÀë×î½üµÄK¸öµã
-4¡¢È·¶¨¾àÀë×î½üµÄÇ°K¸öµãËùÔÚÀà±ğµÄ³öÏÖÆµÂÊ
-5¡¢·µ»Ø¾àÀë×î½üµÄÇ°K¸öµãÖĞÆµÂÊ×î¸ßµÄÀà±ğ×÷Îªµ±Ç°µãµÄÔ¤²â·ÖÀà
+1ã€è®¡ç®—å·²çŸ¥ç±»åˆ«æ•°æ®é›†åˆæ±‡æ€»çš„ç‚¹ä¸å½“å‰ç‚¹çš„è·ç¦»
+2ã€æŒ‰ç…§è·ç¦»é€’å¢æ¬¡åºæ’åº
+3ã€é€‰å–ä¸å½“å‰ç‚¹è·ç¦»æœ€è¿‘çš„Kä¸ªç‚¹
+4ã€ç¡®å®šè·ç¦»æœ€è¿‘çš„å‰Kä¸ªç‚¹æ‰€åœ¨ç±»åˆ«çš„å‡ºç°é¢‘ç‡
+5ã€è¿”å›è·ç¦»æœ€è¿‘çš„å‰Kä¸ªç‚¹ä¸­é¢‘ç‡æœ€é«˜çš„ç±»åˆ«ä½œä¸ºå½“å‰ç‚¹çš„é¢„æµ‹åˆ†ç±»
 */
-//test mat ÊäÈëÊÇ 1*60µÄ»òÕß1*nµÄ   matrixĞèÒªÆ½·½¡£¡£²ÅÊÇÂíÊÏ¾àÀë¾ØÕó
+//test mat è¾“å…¥æ˜¯ 1*60çš„æˆ–è€…1*nçš„   matrixéœ€è¦å¹³æ–¹ã€‚ã€‚æ‰æ˜¯é©¬æ°è·ç¦»çŸ©é˜µ
 //20171129
 int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
 	Mat& matrix, int k, string prefix, int actionBegin, int actionEnd, string matrixName)
 {
 	int label=0, n = trainSample.size();
-	map<float, vector<int>>mp;//¼ÇÂ¼¾àÀëÓëÑµÁ·¼¯µÄË÷Òı ¾àÀë´ÓĞ¡µ½´óÅÅÁĞ
+	map<float, vector<int>>mp;//è®°å½•è·ç¦»ä¸è®­ç»ƒé›†çš„ç´¢å¼• è·ç¦»ä»å°åˆ°å¤§æ’åˆ—
 
 	ofstream of(prefix + "\\" + to_string(actionBegin) + "-" + to_string(actionEnd) + matrixName+"distance.txt");
 
@@ -603,9 +603,9 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	{
 		Mat diff = test - trainSample[i];
 
-		Mat dis = diff * matrix * matrix.t() * diff.t();//²»¿ª·½ÁË
+		Mat dis = diff * matrix * matrix.t() * diff.t();//ä¸å¼€æ–¹äº†
 
-		cout << i << "¾àÀë---" << " " << dis << indexmp[i] << endl;
+		cout << i << "è·ç¦»---" << " " << dis << indexmp[i] << endl;
 		float distance = dis.at<float>(0, 0);
 
 		of << distance << " ";
@@ -615,12 +615,12 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	of.close();
 
 
-	//½«²âÊÔ½á¹û±£´æµ½txtÎÄ¼şÀïÃæ
+	//å°†æµ‹è¯•ç»“æœä¿å­˜åˆ°txtæ–‡ä»¶é‡Œé¢
 	ofstream indexfile("E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\index.txt", ios::app);
 
-	cout << "²âÊÔÖ¡Ë÷Òı£º" << indexmptest[testindex] << endl;
+	cout << "æµ‹è¯•å¸§ç´¢å¼•ï¼š" << indexmptest[testindex] << endl;
 
-	//Êä³öÇ°k¸ö¾àÀë×îĞ¡µÄÖ¡
+	//è¾“å‡ºå‰kä¸ªè·ç¦»æœ€å°çš„å¸§
 	for (auto it = mp.begin(); it != mp.end() && k > 0; it++)
 	{
 		for (int j = 0; j < it->second.size() && k>0; j++)
@@ -632,7 +632,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	}
 	indexfile << endl;
 	indexfile.close();
-	map<int, int>testLabel;//Í³¼Ælabel³öÏÖ´ÎÊı 
+	map<int, int>testLabel;//ç»Ÿè®¡labelå‡ºç°æ¬¡æ•° 
 	for (auto it = mp.begin(); it != mp.end() && k > 0; it++)
 	{
 		for (int j = 0; j < it->second.size() && k>0; j++)
@@ -641,7 +641,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 			k--;
 		}
 	}
-	int temp = 0;//ÕÒµ½³öÏÖ´ÎÊı×î¶àµÄlabel×÷Îª²âÊÔµÄ±êÇ©
+	int temp = 0;//æ‰¾åˆ°å‡ºç°æ¬¡æ•°æœ€å¤šçš„labelä½œä¸ºæµ‹è¯•çš„æ ‡ç­¾
 	for (auto it = testLabel.begin(); it != testLabel.end(); it++)
 	{
 		if (temp < it->second)
@@ -652,7 +652,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	}
 	return label;
 }
-//¶ÁÈ¡knnÑµÁ·Ñù±¾µÄÊı¾İ bool isjulei´ú±íÊÇ·ñÊÇ¾ÛÀàµã ÒòÎªÁ©Â·¾¶²»Ò»Ñù
+//è¯»å–knnè®­ç»ƒæ ·æœ¬çš„æ•°æ® bool isjuleiä»£è¡¨æ˜¯å¦æ˜¯èšç±»ç‚¹ å› ä¸ºä¿©è·¯å¾„ä¸ä¸€æ ·
 //20171130
 void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 	vector<int>& trainLabel, vector<int>& testLabel,
@@ -672,7 +672,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 
 				int label;
 				Mat sample;
-				int m = row, n = col;//ĞéÄâÊı¾İgroundtruth m = 20 , n=3
+				int m = row, n = col;//è™šæ‹Ÿæ•°æ®groundtruth m = 20 , n=3
 				stringstream ss;
 
 				if (isjulei)
@@ -680,7 +680,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 					if (dim == 3)ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature.txt";
 					else ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
 				}
-				else//¹Ø½Úµã
+				else//å…³èŠ‚ç‚¹
 				{
 					ss << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
 				}
@@ -688,9 +688,9 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 				string path = ss.str();
 				sample = filetool.InitMat(path, m, n, true, label);
 				cout << path << endl;
-				normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//¹éÒ»»¯
+				normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//å½’ä¸€åŒ–
 
-				//if (index % 10 == 0)//È¡Ñù×öÎª²âÊÔ
+				//if (index % 10 == 0)//å–æ ·åšä¸ºæµ‹è¯•
 				{
 					indexmptest[testSample.size()] = action * 10000 + people * 1000 + index;
 
@@ -698,7 +698,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 					testSample.push_back(sample);
 				}
 				//else //train
-				if (index % jiange == 0)//testÈ«È¡  ÈÎÈ¡Ò»Ö¡×÷Îª²âÊÔ£¬£¬ÇóÓëtrainÖĞµÄÑù±¾µÄ¾àÀë train²»È«È¡ÒÔÃâÈ«ÏàËÆ
+				if (index % jiange == 0)//testå…¨å–  ä»»å–ä¸€å¸§ä½œä¸ºæµ‹è¯•ï¼Œï¼Œæ±‚ä¸trainä¸­çš„æ ·æœ¬çš„è·ç¦» trainä¸å…¨å–ä»¥å…å…¨ç›¸ä¼¼
 				{
 
 					indexmp[trainSample.size()] = action * 10000 + people * 1000 + index;
@@ -713,7 +713,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 	}
 }
 
-//²âÊÔÒ»ÏÂknnÊÇ·ñÅÜÍ¨ ÅÜÕıÈ· int jiange ´ú±í¶àÉÙÖ¡²ÉÑù Ã»¸ö10Ö¡»¹ÊÇ5Ö¡Ö®ÀàµÄ
+//æµ‹è¯•ä¸€ä¸‹knnæ˜¯å¦è·‘é€š è·‘æ­£ç¡® int jiange ä»£è¡¨å¤šå°‘å¸§é‡‡æ · æ²¡ä¸ª10å¸§è¿˜æ˜¯5å¸§ä¹‹ç±»çš„
 //20171130
 void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,
@@ -727,18 +727,18 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	int label, correct = 0;
 	Mat matrix;
 
-	if (isjulei)//¾ÛÀàÌØÕ÷µã
+	if (isjulei)//èšç±»ç‰¹å¾ç‚¹
 	{
 		prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 		if (dim == 3)
 		{
-			//row = 1, col = 60;//groundtruthÊÇ60=20*3ÁĞ  ¾ÛÀàÌØÕ÷ÊÇ22*3=66
+			//row = 1, col = 60;//groundtruthæ˜¯60=20*3åˆ—  èšç±»ç‰¹å¾æ˜¯22*3=66
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 5, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd,jiange);
 		}
 		if (dim == 4)
 		{
-			//row = 1, col = 27 * 3;//groundtruthÊÇ60=20*3ÁĞ  ¾ÛÀàÌØÕ÷ÊÇ22*3=66 
+			//row = 1, col = 27 * 3;//groundtruthæ˜¯60=20*3åˆ—  èšç±»ç‰¹å¾æ˜¯22*3=66 
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 5, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange, 4);
 		}
@@ -752,7 +752,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	}
 
 
-	//startindex ÊÇÖ¸Êı×éÏÂ±êË÷Òı  ÏÖÔÚĞèÒª×ª»»Ò»ÏÂ ±ÈÈçÊäÈë²âÊÔÖ¡Ö±½ÓÊÇÍ¼Æ¬Ãû³Æ¶ø²»ÊÇÔÚÊı×éÖĞµÄÏÂ±êÁË
+	//startindex æ˜¯æŒ‡æ•°ç»„ä¸‹æ ‡ç´¢å¼•  ç°åœ¨éœ€è¦è½¬æ¢ä¸€ä¸‹ æ¯”å¦‚è¾“å…¥æµ‹è¯•å¸§ç›´æ¥æ˜¯å›¾ç‰‡åç§°è€Œä¸æ˜¯åœ¨æ•°ç»„ä¸­çš„ä¸‹æ ‡äº†
 
 	int indexInVec = 0;
 	for (auto it = indexmptest.begin(); it != indexmptest.end(); it++)
@@ -777,7 +777,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 }
 
 
-//Ğ£×¼groundtruth ½«¹Ø½Úµãy×ø±ê¸ü¸Ä
+//æ ¡å‡†groundtruth å°†å…³èŠ‚ç‚¹yåæ ‡æ›´æ”¹
 //20171206
 void PoseMeasure::jiaozhun()
 {
@@ -797,23 +797,23 @@ void PoseMeasure::jiaozhun()
 
 				cout << p1 << endl;
 				filetool.Read2GT(p1, gt2);
-				gt2[5][1] += 2;//6ºÅ¹Ø½ÚµãÆ«ÉÏ ÍùÏÂµ÷ÕûÒ»ÏÂ
+				gt2[5][1] += 2;//6å·å…³èŠ‚ç‚¹åä¸Š å¾€ä¸‹è°ƒæ•´ä¸€ä¸‹
 				filetool.Write2GT(p1, gt2);
 			}
 		}
 	}
 
 }
-//µ÷ÕûÍ·²¿¾ÛÀàÌØÕ÷µãÎ»ÖÃ 
-//20171217    81116È±ºÃ¼¸¸ö¾ÛÀàµã 91145È±1¸ö¾ÛÀàµã ±êºÅÎª2
+//è°ƒæ•´å¤´éƒ¨èšç±»ç‰¹å¾ç‚¹ä½ç½® 
+//20171217    81116ç¼ºå¥½å‡ ä¸ªèšç±»ç‚¹ 91145ç¼º1ä¸ªèšç±»ç‚¹ æ ‡å·ä¸º2
 int PoseMeasure::minDistance(vector<int>&input, vector<vector<int>>& gt2, vector<bool>&flag)
 {
-	//·µ»Ø¾àÀëinput×î½üµÄµã  ÏÂ±ê
+	//è¿”å›è·ç¦»inputæœ€è¿‘çš„ç‚¹  ä¸‹æ ‡
 	float mindis = 9999999.0;
 	int minIndex = 2;
 	for (int i = 2; i <= 4; i++)
 	{
-		if (flag[i] == false)//Î´¸ü¸Ä
+		if (flag[i] == false)//æœªæ›´æ”¹
 		{
 			int t = (gt2[i][0] - input[0])*(gt2[i][0] - input[0]) + (gt2[i][1] - input[1])*(gt2[i][1] - input[1]);
 
@@ -824,7 +824,7 @@ int PoseMeasure::minDistance(vector<int>&input, vector<vector<int>>& gt2, vector
 			}
 		}
 	}
-	flag[minIndex] = true;//ÓÃ¹ı ±ê¼Ç
+	flag[minIndex] = true;//ç”¨è¿‡ æ ‡è®°
 	return minIndex;
 }
 void PoseMeasure::adjustClusterPoint(vector<vector<int>>& gt2)
@@ -832,14 +832,14 @@ void PoseMeasure::adjustClusterPoint(vector<vector<int>>& gt2)
 	vector<vector<int>> temp = gt2;
 	vector<bool>flag(5, false);
 	int nearIndex = 2;
-	nearIndex = minDistance(gt2[8], gt2, flag);//¾àÀë8×î½üµÄ×÷Îª3
+	nearIndex = minDistance(gt2[8], gt2, flag);//è·ç¦»8æœ€è¿‘çš„ä½œä¸º3
 	temp[3] = gt2[nearIndex];
 
-	nearIndex = minDistance(gt2[12], gt2, flag);//¾àÀë12×î½üµÄ×÷Îª4
+	nearIndex = minDistance(gt2[12], gt2, flag);//è·ç¦»12æœ€è¿‘çš„ä½œä¸º4
 	temp[4] = gt2[nearIndex];
 
 	for (int i = 2; i <= 4; i++)if (flag[i] == false)nearIndex = i;
-	temp[2] = gt2[nearIndex];//ÁíÍâÒ»¸ö×÷Îª2;
+	temp[2] = gt2[nearIndex];//å¦å¤–ä¸€ä¸ªä½œä¸º2;
 
 	gt2 = temp;
 }
@@ -876,7 +876,7 @@ void PoseMeasure::adjustClusterPoint()
 }
 
 
-//20171221ĞèÒªÒ»¸öÅĞ¶Ï¾ÛÀàµãÊÇ·ñÔÚÈËÌåÉÏµÄº¯Êı
+//20171221éœ€è¦ä¸€ä¸ªåˆ¤æ–­èšç±»ç‚¹æ˜¯å¦åœ¨äººä½“ä¸Šçš„å‡½æ•°
 
 void PoseMeasure::adjustNotOnBody(vector<vector<int>>& gt2)
 {
@@ -916,14 +916,14 @@ void PoseMeasure::adjustNotOnBody()
 }
 
 
-//ÇóÁ½¸öÈıÎ¬µãÅ·Ê½¾àÀë
+//æ±‚ä¸¤ä¸ªä¸‰ç»´ç‚¹æ¬§å¼è·ç¦»
 float PoseMeasure::EucDis(vector<float>&a, vector<float>&b)
 {
 	float ans =0;
 	for (int i = 0; i < 3;i++)ans += abs(a[i] - b[i])*abs(a[i] - b[i]);	
 	return ans;
 }
-//µ¥Î»»¯ÏòÁ¿
+//å•ä½åŒ–å‘é‡
 vector<float>  PoseMeasure::NormalizationUnit(vector<float>&a)
 {
 	vector<float>ret(3,0);
@@ -932,13 +932,13 @@ vector<float>  PoseMeasure::NormalizationUnit(vector<float>&a)
 	for (int i = 0; i < 3; i++)ret[i] = a[i] / sqrt(length);	
 	return ret;
 }
-//¹¹Ôì¾ÛÀàÌØÕ÷µãµÄ   ×ËÌ¬Ê¶±ğÌØÕ÷   
-// Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»ÊÇlabel   
+//æ„é€ èšç±»ç‰¹å¾ç‚¹çš„   å§¿æ€è¯†åˆ«ç‰¹å¾   
+// å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€æ˜¯label   
 //20171227
-//¹¹Ôì¾ÛÀàÌØÕ÷µãµÄ   ×ËÌ¬Ê¶±ğÌØÕ÷  Ò»¹²22*3=66 +  =   Î¬
-// Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»¸öÊıÊÇlabel
+//æ„é€ èšç±»ç‰¹å¾ç‚¹çš„   å§¿æ€è¯†åˆ«ç‰¹å¾  ä¸€å…±22*3=66 +  =   ç»´
+// å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€ä¸ªæ•°æ˜¯label
 
-//Ã¿Ò»¶Ô¾ÛÀàµãÖ®¼ä¾àÀë Ã¿Ò»¶Ô¾ÛÀàµãÖ®¼ä·½Ïò
+//æ¯ä¸€å¯¹èšç±»ç‚¹ä¹‹é—´è·ç¦» æ¯ä¸€å¯¹èšç±»ç‚¹ä¹‹é—´æ–¹å‘
 void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
 	int indexBegin, int indexEnd,
@@ -948,7 +948,7 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureNew.txt";//×îºóÒ»Î¬ÊÇ±êÇ©
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureNew.txt";//æœ€åä¸€ç»´æ˜¯æ ‡ç­¾
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -989,7 +989,7 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 				}
 				if (dim == 4)
 				{					
-					for (int i = 0; i < gt2.size();i++)//Ã¿Ò»¶Ô¾ÛÀàµãÖ®¼ä¾àÀë
+					for (int i = 0; i < gt2.size();i++)//æ¯ä¸€å¯¹èšç±»ç‚¹ä¹‹é—´è·ç¦»
 					{
 						for (int j = i + 1; j < gt2.size();j++)
 						{
@@ -999,7 +999,7 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 						}
 					}
 					
-					for (int i = 0; i < gt2.size(); i++ )//Ã¿Ò»¶Ô¾ÛÀàµãÖ®¼ä·½Ïò
+					for (int i = 0; i < gt2.size(); i++ )//æ¯ä¸€å¯¹èšç±»ç‚¹ä¹‹é—´æ–¹å‘
 					{
 						for (int j = i + 1; j < gt2.size(); j++)
 						{
@@ -1024,14 +1024,14 @@ void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
 }
 
 
-//Ö®Ç°ÇóµÄÌØÕ÷ Ö»ÓÃµ½ÁË×ø±ê²î Ã»ÓÃµ½¾àÀë
-//¹¹Ôì¾ÛÀàÌØÕ÷µãµÄ   ×ËÌ¬Ê¶±ğÌØÕ÷   
-// Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»ÊÇlabel   
+//ä¹‹å‰æ±‚çš„ç‰¹å¾ åªç”¨åˆ°äº†åæ ‡å·® æ²¡ç”¨åˆ°è·ç¦»
+//æ„é€ èšç±»ç‰¹å¾ç‚¹çš„   å§¿æ€è¯†åˆ«ç‰¹å¾   
+// å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€æ˜¯label   
 //20171228
-//¹¹Ôì¾ÛÀàÌØÕ÷µãµÄ   ×ËÌ¬Ê¶±ğÌØÕ÷  Ò»¹²22*3=66 +  =   Î¬
-// Ç°3Î¬ÊÇ3Î¬ÌØÕ÷ ×îºóÒ»¸öÊıÊÇlabel
+//æ„é€ èšç±»ç‰¹å¾ç‚¹çš„   å§¿æ€è¯†åˆ«ç‰¹å¾  ä¸€å…±22*3=66 +  =   ç»´
+// å‰3ç»´æ˜¯3ç»´ç‰¹å¾ æœ€åä¸€ä¸ªæ•°æ˜¯label
 
-//¹Ø½ÚµãÁ¬ÏßÖ®¼ä·½Ïò£¬¹Ø½ÚµãÖ®¼ä¾àÀë
+//å…³èŠ‚ç‚¹è¿çº¿ä¹‹é—´æ–¹å‘ï¼Œå…³èŠ‚ç‚¹ä¹‹é—´è·ç¦»
 void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,
 	int indexBegin, int indexEnd,
@@ -1041,7 +1041,7 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//×îºóÒ»Î¬ÊÇ±êÇ©
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//æœ€åä¸€ç»´æ˜¯æ ‡ç­¾
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -1083,13 +1083,13 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 				}
 				if (dim == 4)
 				{
-					for (int i = 0; i < JULEI4_line_Num; i++)//Á¬Ïß¾àÀë
+					for (int i = 0; i < JULEI4_line_Num; i++)//è¿çº¿è·ç¦»
 					{
 						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2+1]]) << " ";
 						count++;
 						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) <<endl;
 					}
-					for (int i = 0; i < JULEI4_line_Num; i++)//Á¬Ïß·½Ïò
+					for (int i = 0; i < JULEI4_line_Num; i++)//è¿çº¿æ–¹å‘
 					{
 						
 						vector<float>temp(3, 0), norm;
@@ -1115,10 +1115,10 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 
 //20180103
 /*
-¼ÙÉè¸ø³ö¿Õ¼äÖĞµÄÈı¸öµã£ºA£¬B£¬C£¬ÇóµãCµ½ÓÉµãA¡¢B¹¹³ÉµÄÖ±ÏßµÄ¾àÀë¡£
+å‡è®¾ç»™å‡ºç©ºé—´ä¸­çš„ä¸‰ä¸ªç‚¹ï¼šAï¼ŒBï¼ŒCï¼Œæ±‚ç‚¹Cåˆ°ç”±ç‚¹Aã€Bæ„æˆçš„ç›´çº¿çš„è·ç¦»ã€‚
 d = (AB x AC)/|AB|
-|AB X AC|/2ÊÇÈı½ÇĞÎABCµÄÃæ»ı£¬Õâ¸öÈı½ÇĞÎµÄµ×ÊÇ|AB|£¬¸ß¾ÍÊÇCµ½ABµÄ¾àÀë¡£
-po´úÂë£¨C++£©,¼ÆËãµãµ½Ö±ÏßµÄ¾àÀë
+|AB X AC|/2æ˜¯ä¸‰è§’å½¢ABCçš„é¢ç§¯ï¼Œè¿™ä¸ªä¸‰è§’å½¢çš„åº•æ˜¯|AB|ï¼Œé«˜å°±æ˜¯Cåˆ°ABçš„è·ç¦»ã€‚
+poä»£ç ï¼ˆC++ï¼‰,è®¡ç®—ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
 */
 double PoseMeasure::DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s)
 {
@@ -1127,10 +1127,10 @@ double PoseMeasure::DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s)
 	double bs = sqrt(pow((s->x - b->x), 2.0) + pow((s->y - b->y), 2.0) + pow((s->z - b->z), 2.0));
 	double cos_A = (pow(as, 2.0) + pow(ab, 2.0) - pow(bs, 2.0)) / (2 * ab*as);
 	double sin_A = sqrt(1 - pow(cos_A, 2.0));
-	return as*sin_A*as*sin_A;//¾àÀëµÄÆ½·½
+	return as*sin_A*as*sin_A;//è·ç¦»çš„å¹³æ–¹
 }
 /*
-½áºÏÂÛÎÄ£¬¹¹ÔìµãÏßÃæÏà¹ØµÄ×ËÌ¬ÌØÕ÷¡£
+ç»“åˆè®ºæ–‡ï¼Œæ„é€ ç‚¹çº¿é¢ç›¸å…³çš„å§¿æ€ç‰¹å¾ã€‚
 20180103
 */
 void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,
@@ -1140,7 +1140,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//×îºóÒ»Î¬ÊÇ±êÇ©
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//æœ€åä¸€ç»´æ˜¯æ ‡ç­¾
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -1181,15 +1181,15 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 					}
 				}
 				if (dim == 4)
-				{//¹Ø½Úµ½ËÄÖ«ÉÏµÄ¹Ø½ÚµÄÖ±ÏßµÄ¾àÀë
-					//Ö«¶Ë¹Ø½ÚÁ¬Ïß·½Ïò
-					for (int i = 0; i < lianXian.size()/2; i++)//Á¬Ïß¾àÀë
+				{//å…³èŠ‚åˆ°å››è‚¢ä¸Šçš„å…³èŠ‚çš„ç›´çº¿çš„è·ç¦»
+					//è‚¢ç«¯å…³èŠ‚è¿çº¿æ–¹å‘
+					for (int i = 0; i < lianXian.size()/2; i++)//è¿çº¿è·ç¦»
 					{
 						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << " ";
 						count++;
 						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << endl;
 					}
-					for (int i = 0; i < lianXian.size() / 2; i++)//Á¬Ïß·½Ïò
+					for (int i = 0; i < lianXian.size() / 2; i++)//è¿çº¿æ–¹å‘
 					{
 						vector<float>temp(3, 0), norm;
 						for (int k = 0; k < 3; k++)temp[k] = gt2[julei4_line[i * 2]][k] - gt2[julei4_line[i * 2 + 1]][k];
@@ -1197,10 +1197,10 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
 					}
 
-					//µãµ½ËÄÖ«²¿·Ö Ö±Ïß¾àÀë
+					//ç‚¹åˆ°å››è‚¢éƒ¨åˆ† ç›´çº¿è·ç¦»
 					for (int i = 0; i < zhiduanlianXian.size()/2; i++)
 					{
-						S_Point lineEnd1(gt2[zhiduanlianXian[2 * i]]), lineEnd2(gt2[zhiduanlianXian[2 * i+1]]);//Ö±ÏßÁ½¶Ë
+						S_Point lineEnd1(gt2[zhiduanlianXian[2 * i]]), lineEnd2(gt2[zhiduanlianXian[2 * i+1]]);//ç›´çº¿ä¸¤ç«¯
 						S_Point pt1(gt2[xuyaoqiujulidedian[i][0]]), pt2(gt2[xuyaoqiujulidedian[i][1]]);
 						double dis1 = DistanceOfPointToLine(&lineEnd1,&lineEnd2, &pt1);
 						double dis2 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt2);
@@ -1208,7 +1208,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 						fea << dis1 << " "; of << dis1 << endl;
 						fea << dis2 << " "; of << dis2 << endl;
 					}
-
+					//é¢çš„ç›¸å…³ä¿¡æ¯ã€‚ã€‚
 
 				}
 
@@ -1223,4 +1223,59 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 	}
 
 	fea.close();
+}
+/*
+Ax+by+cz=D æ‹Ÿåˆå¹³é¢
+http://blog.csdn.net/zhouyelihua/article/details/46122977
+è°ƒç”¨æ–¹æ³•
+CvMat*points_mat = cvCreateMat(X_vector.size(), 3, CV_32FC1);//å®šä¹‰ç”¨æ¥å­˜å‚¨éœ€è¦æ‹Ÿåˆç‚¹çš„çŸ©é˜µ
+for (int i=0;i < X_vector.size(); ++i)
+{
+points_mat->data.fl[i*3+0] = X_vector[i];//çŸ©é˜µçš„å€¼è¿›è¡Œåˆå§‹åŒ–   Xçš„åæ ‡å€¼
+points_mat->data.fl[i * 3 + 1] = Y_vector[i];//  Yçš„åæ ‡å€¼
+points_mat->data.fl[i * 3 + 2] = Z_vector[i];<span style="font-family: Arial, Helvetica, sans-serif;">//  Zçš„åæ ‡å€¼</span>
+
+}
+float plane12[4] = { 0 };//å®šä¹‰ç”¨æ¥å‚¨å­˜å¹³é¢å‚æ•°çš„æ•°ç»„
+cvFitPlane(points_mat, plane12);//è°ƒç”¨æ–¹ç¨‹
+*/
+
+void PoseMeasure::cvFitPlane(const CvMat* points, float* plane)
+{
+	// Estimate geometric centroid.
+	int nrows = points->rows;
+	int ncols = points->cols;
+	int type = points->type;
+	CvMat* centroid = cvCreateMat(1, ncols, type);
+	cvSet(centroid, cvScalar(0));
+	for (int c = 0; c < ncols; c++){
+		for (int r = 0; r < nrows; r++)
+		{
+			centroid->data.fl[c] += points->data.fl[ncols*r + c];
+		}
+		centroid->data.fl[c] /= nrows;
+	}
+	// Subtract geometric centroid from each point.
+	CvMat* points2 = cvCreateMat(nrows, ncols, type);
+	for (int r = 0; r < nrows; r++)
+		for (int c = 0; c < ncols; c++)
+			points2->data.fl[ncols*r + c] = points->data.fl[ncols*r + c] - centroid->data.fl[c];
+	// Evaluate SVD of covariance matrix.
+	CvMat* A = cvCreateMat(ncols, ncols, type);
+	CvMat* W = cvCreateMat(ncols, ncols, type);
+	CvMat* V = cvCreateMat(ncols, ncols, type);
+	cvGEMM(points2, points, 1, NULL, 0, A, CV_GEMM_A_T);
+	cvSVD(A, W, NULL, V, CV_SVD_V_T);
+	// Assign plane coefficients by singular vector corresponding to smallest singular value.
+	plane[ncols] = 0;
+	for (int c = 0; c < ncols; c++){
+		plane[c] = V->data.fl[ncols*(ncols - 1) + c];
+		plane[ncols] += plane[c] * centroid->data.fl[c];
+	}
+	// Release allocated resources.
+	cvReleaseMat(&centroid);
+	cvReleaseMat(&points2);
+	cvReleaseMat(&A);
+	cvReleaseMat(&W);
+	cvReleaseMat(&V);
 }

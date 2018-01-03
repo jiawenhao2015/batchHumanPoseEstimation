@@ -76,6 +76,8 @@ public:
 
 	double DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s);
 
+	void cvFitPlane(const CvMat* points, float* plane);
+
 
 	FileTool filetool;
 
