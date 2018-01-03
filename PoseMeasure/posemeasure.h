@@ -30,6 +30,16 @@ public:
 
 
 };
+struct S_Point
+{
+	double x;
+	double y;
+	double z;
+	S_Point(vector<float>p)
+	{
+		x = p[0], y = p[1], z = p[2];
+	}
+};
 
 class PoseMeasure
 {
@@ -41,6 +51,7 @@ public:
 	void  creatClusterFeature2(int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,int indexBegin, int indexEnd);
 	void  creatClusterFeature3(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 	void  creatClusterFeature4(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
+	void  creatClusterFeatureDianxianmian(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 
 	void Normalization(Mat& mat);
 	int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
@@ -63,7 +74,7 @@ public:
 	float EucDis(vector<float>&a, vector<float>&b);
 	vector<float> NormalizationUnit(vector<float>&a);
 
-
+	double DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s);
 
 
 	FileTool filetool;

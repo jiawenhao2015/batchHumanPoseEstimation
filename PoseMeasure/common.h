@@ -176,3 +176,47 @@ JULEI4_Joint julei4_line[JULEI4_line_Num * 2] =
 	leg18, leg17
 
 };
+//添加点线面后 增加手端到肩膀的距离
+vector<int> lianXian =
+{	//主
+	left5, hip0,
+	h1, hip0,
+	right9, hip0,
+	leg13, hip0,
+	leg17, hip0,
+
+	left5,left8,
+	right9,right12,
+	leg13,leg16,
+	leg20,leg17,//手脚到手臂 髋直线
+
+	//整体
+
+	left5, left6,
+	left6, left7,
+	left7, left8,
+	left8, h3,
+
+	h1, h2,
+	h2, h3,
+	h2, h4,
+	h3, h4,
+
+	h3, hip0,
+	h4, hip0,
+
+	h4, right12,
+	right12, right11,
+	right11, right10,
+	right10, right9,
+
+	hip0, leg16,
+	leg16, leg15,
+	leg15, leg14,
+	leg14, leg13,
+
+	hip0, leg20,
+	leg20, leg19,
+	leg19, leg18,
+	leg18, leg17
+};

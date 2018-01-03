@@ -1111,3 +1111,107 @@ void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
 
 	fea.close();
 }
+
+
+//20180103
+/*
+假设给出空间中的三个点：A，B，C，求点C到由点A、B构成的直线的距离。
+d = (AB x AC)/|AB|
+|AB X AC|/2是三角形ABC的面积，这个三角形的底是|AB|，高就是C到AB的距离。
+po代码（C++）,计算点到直线的距离
+*/
+double PoseMeasure::DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s)
+{
+	double ab = sqrt(pow((a->x - b->x), 2.0) + pow((a->y - b->y), 2.0) + pow((a->z - b->z), 2.0));
+	double as = sqrt(pow((a->x - s->x), 2.0) + pow((a->y - s->y), 2.0) + pow((a->z - s->z), 2.0));
+	double bs = sqrt(pow((s->x - b->x), 2.0) + pow((s->y - b->y), 2.0) + pow((s->z - b->z), 2.0));
+	double cos_A = (pow(as, 2.0) + pow(ab, 2.0) - pow(bs, 2.0)) / (2 * ab*as);
+	double sin_A = sqrt(1 - pow(cos_A, 2.0));
+	return as*sin_A*as*sin_A;//距离的平方
+}
+/*
+结合论文，构造点线面相关的姿态特征。
+20180103
+*/
+void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,
+	int peopleBegin, int peopleEnd,int indexBegin, int indexEnd,int dim)
+{
+	int count = 0;
+	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+
+	stringstream  ss;
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int people = peopleBegin; people <= peopleEnd; people++)
+		{
+			if (people == 3) continue;
+			for (int index = indexBegin; index <= indexEnd; index++)
+			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
+
+				vector<vector<float>> gt2;
+				stringstream  ss2, ss3;
+
+				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
+				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
+
+				string p3 = ss3.str();
+				string p2 = ss2.str();
+
+				cout << p3 << endl;
+				filetool.ReadmidGT(p3, gt2);
+
+				ofstream of(p2);
+				int label = action;
+
+				if (dim == 3)
+				{
+					for (int i = 0; i < JULEI_line_Num; i++)
+					{
+						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
+
+						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
+							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
+							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
+					}
+				}
+				if (dim == 4)
+				{
+					for (int i = 0; i < JULEI4_line_Num; i++)//连线距离
+					{
+						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << " ";
+						count++;
+						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << endl;
+					}
+					for (int i = 0; i < JULEI4_line_Num; i++)//连线方向
+					{
+						vector<float>temp(3, 0), norm;
+						for (int k = 0; k < 3; k++)temp[k] = gt2[julei4_line[i * 2]][k] - gt2[julei4_line[i * 2 + 1]][k];
+						norm = NormalizationUnit(temp);
+						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
+					}
+
+					//关节到四肢上的关节的直线的距离
+					//肢端关节连线方向
+
+
+
+				}
+
+				fea << label << endl;
+				of << label << endl;
+				of.close();
+				count++;
+				cout << "----------------------------" << count << "----------------------------" << endl;
+				count = 0;
+			}
+		}
+	}
+
+	fea.close();
+}
