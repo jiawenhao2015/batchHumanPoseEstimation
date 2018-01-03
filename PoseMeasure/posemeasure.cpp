@@ -1181,14 +1181,15 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 					}
 				}
 				if (dim == 4)
-				{
-					for (int i = 0; i < JULEI4_line_Num; i++)//连线距离
+				{//关节到四肢上的关节的直线的距离
+					//肢端关节连线方向
+					for (int i = 0; i < lianXian.size()/2; i++)//连线距离
 					{
 						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << " ";
 						count++;
 						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << endl;
 					}
-					for (int i = 0; i < JULEI4_line_Num; i++)//连线方向
+					for (int i = 0; i < lianXian.size() / 2; i++)//连线方向
 					{
 						vector<float>temp(3, 0), norm;
 						for (int k = 0; k < 3; k++)temp[k] = gt2[julei4_line[i * 2]][k] - gt2[julei4_line[i * 2 + 1]][k];
@@ -1196,9 +1197,17 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
 					}
 
-					//关节到四肢上的关节的直线的距离
-					//肢端关节连线方向
+					//点到四肢部分 直线距离
+					for (int i = 0; i < zhiduanlianXian.size()/2; i++)
+					{
+						S_Point lineEnd1(gt2[zhiduanlianXian[2 * i]]), lineEnd2(gt2[zhiduanlianXian[2 * i+1]]);//直线两端
+						S_Point pt1(gt2[xuyaoqiujulidedian[i][0]]), pt2(gt2[xuyaoqiujulidedian[i][1]]);
+						double dis1 = DistanceOfPointToLine(&lineEnd1,&lineEnd2, &pt1);
+						double dis2 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt2);
 
+						fea << dis1 << " "; of << dis1 << endl;
+						fea << dis2 << " "; of << dis2 << endl;
+					}
 
 
 				}

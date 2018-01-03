@@ -220,3 +220,19 @@ vector<int> lianXian =
 	leg19, leg18,
 	leg18, leg17
 };
+//类似手到肩膀等4肢直线
+vector<int> zhiduanlianXian =
+{
+	left5, left8,
+	right9, right12,
+	leg13, leg16,
+	leg20, leg17,//手脚
+};
+//需要求距离的点
+vector<vector<int>> xuyaoqiujulidedian =
+{
+	{ left6, left7},
+	{ right11, right10},
+	{ leg15, leg14 },
+	{ leg19, leg18}
+};
