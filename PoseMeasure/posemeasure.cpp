@@ -1140,7 +1140,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//最后一维是标签
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureDianxianmian.txt";//最后一维是标签
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -1197,6 +1197,8 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
 					}
 
+
+					cout << count << endl;
 					//点到四肢部分 直线距离
 					for (int i = 0; i < zhiduanlianXian.size()/2; i++)
 					{
@@ -1205,10 +1207,31 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 						double dis1 = DistanceOfPointToLine(&lineEnd1,&lineEnd2, &pt1);
 						double dis2 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt2);
 
-						fea << dis1 << " "; of << dis1 << endl;
-						fea << dis2 << " "; of << dis2 << endl;
+						fea << dis1 << " "; of << dis1 << endl; count++;
+						fea << dis2 << " "; of << dis2 << endl; count++;
 					}
-					//面的相关信息。。
+					//面的相关信息。。 4个平面法向量 之间方向
+					//首先求4个平面法向量
+					vector<vector<float>>norm(4);
+					for (int i = 0; i < 4;i++)
+					{
+						vector<vector<float>> part;//每个部位里面4个点
+						for (int j = 0; j < 4;j++)
+						{
+							part.push_back(gt2[bodypart[i][j]]);
+						}
+						norm[i] = getPlaneNorm(part);
+					}
+					//求法向量之间夹角
+
+					for (int i = 0; i < 4; i++)
+					{
+						for (int j = i + 1; j < 4;j++)
+						{
+							float angle = getTwoNormalAngle(norm[i], norm[j]);
+							fea << angle << " "; of << angle << endl; count++;
+						}
+					}
 
 				}
 
@@ -1221,7 +1244,6 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 			}
 		}
 	}
-
 	fea.close();
 }
 /*
@@ -1231,10 +1253,9 @@ http://blog.csdn.net/zhouyelihua/article/details/46122977
 CvMat*points_mat = cvCreateMat(X_vector.size(), 3, CV_32FC1);//定义用来存储需要拟合点的矩阵
 for (int i=0;i < X_vector.size(); ++i)
 {
-points_mat->data.fl[i*3+0] = X_vector[i];//矩阵的值进行初始化   X的坐标值
-points_mat->data.fl[i * 3 + 1] = Y_vector[i];//  Y的坐标值
-points_mat->data.fl[i * 3 + 2] = Z_vector[i];<span style="font-family: Arial, Helvetica, sans-serif;">//  Z的坐标值</span>
-
+	points_mat->data.fl[i*3+0] = X_vector[i];//矩阵的值进行初始化   X的坐标值
+	points_mat->data.fl[i * 3 + 1] = Y_vector[i];//  Y的坐标值
+	points_mat->data.fl[i * 3 + 2] = Z_vector[i];
 }
 float plane12[4] = { 0 };//定义用来储存平面参数的数组
 cvFitPlane(points_mat, plane12);//调用方程
@@ -1278,4 +1299,37 @@ void PoseMeasure::cvFitPlane(const CvMat* points, float* plane)
 	cvReleaseMat(&A);
 	cvReleaseMat(&W);
 	cvReleaseMat(&V);
+}
+
+/*
+20180103
+返回平面的单位化法向量
+输入是部位的4个点 返回这4个点拟合的平面法向量
+*/
+vector<float> PoseMeasure::getPlaneNorm(vector<vector<float>>&part)
+{
+	CvMat*points_mat = cvCreateMat(part.size(), 3, CV_32FC1);//定义用来存储需要拟合点的矩阵
+	for (int i = 0; i < part.size(); ++i)
+	{
+		points_mat->data.fl[i * 3 + 0] = part[i][0];//矩阵的值进行初始化   X的坐标值
+		points_mat->data.fl[i * 3 + 1] = part[i][1];//  Y的坐标值
+		points_mat->data.fl[i * 3 + 2] = part[i][2];
+	}
+	float plane12[4] = { 0 };//定义用来储存平面参数的数组
+	cvFitPlane(points_mat, plane12);//调用方程
+	vector<float>temp(3),norm;
+	temp[0] = plane12[0], temp[1] = plane12[1], temp[2] = plane12[2];
+	norm = NormalizationUnit(temp);//单位化
+	return norm;
+}
+float PoseMeasure::getTwoNormalAngle(vector<float>&normal1, vector<float>&normal2)
+{
+	
+	float cosTheta;
+	cosTheta = abs(normal1[0] * normal2[0] + normal1[1] * normal2[1] + normal1[2] * normal2[2]) / (sqrt(normal1[0] * normal1[0] + normal1[1] * normal1[1] + normal1[2] * normal1[2])*sqrt(normal2[0] * normal2[0] + normal2[1] * normal2[1] + normal2[2] * normal2[2]));
+
+	//if (cosTheta >= 1.0)return 0.0;	
+	//cout << "cosTheta:" << cosTheta << " " << "acos(cosTheta):" << acos(cosTheta) << endl;
+	 
+	return cosTheta;
 }

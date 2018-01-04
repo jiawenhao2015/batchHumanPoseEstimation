@@ -77,8 +77,9 @@ public:
 	double DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s);
 
 	void cvFitPlane(const CvMat* points, float* plane);
+	vector<float> getPlaneNorm(vector<vector<float>>&part);
 
-
+	float getTwoNormalAngle(vector<float>&norm1, vector<float>&norm2);
 	FileTool filetool;
 
 	map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。

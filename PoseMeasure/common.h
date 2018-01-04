@@ -236,3 +236,11 @@ vector<vector<int>> xuyaoqiujulidedian =
 	{ leg15, leg14 },
 	{ leg19, leg18}
 };
+//身体部位 4肢
+vector<vector<int>> bodypart =
+{
+	{ left5, left6, left7, left8 },
+	{ right9, right10, right11, right12},
+	{ leg13, leg14, leg15, leg16},
+	{ leg17, leg18, leg19, leg20 }
+};
