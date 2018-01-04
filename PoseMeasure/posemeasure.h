@@ -15,8 +15,8 @@
 using namespace std;
 using namespace cv;
 
-//姿态度量相关函数
 
+//读写文件相关
 class FileTool
 {
 public:
@@ -27,7 +27,8 @@ public:
 	void Read2Fea(string matrixPath, vector<vector<int>>& vec);
 	void Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp);
 	Mat InitMat(string matrixPath, int m, int n, bool containlabel, int& label);
-
+	void  resultPicMerge();
+	bool ReadFile(string filePath, vector<float>&errorVec);
 
 };
 struct S_Point
@@ -40,7 +41,7 @@ struct S_Point
 		x = p[0], y = p[1], z = p[2];
 	}
 };
-
+//姿态度量相关函数
 class PoseMeasure
 {
 public:
@@ -82,12 +83,14 @@ public:
 	float getTwoNormalAngle(vector<float>&norm1, vector<float>&norm2);
 	FileTool filetool;
 
+
+
 	map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。
 	map<int, int>indexmptest;//记录ceshi集里面的帧的索引
 	PoseMeasure(){}
 	~PoseMeasure(){}
 };
 
-//读写文件相关
+
 
 #endif

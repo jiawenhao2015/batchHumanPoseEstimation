@@ -1183,22 +1183,23 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 				if (dim == 4)
 				{//关节到四肢上的关节的直线的距离
 					//肢端关节连线方向
+					cout << "lianxiansize():"<<lianXian.size() << endl;
 					for (int i = 0; i < lianXian.size()/2; i++)//连线距离
 					{
-						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << " ";
+						fea << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << " ";
 						count++;
-						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) << endl;
+						of << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << endl;
 					}
+					cout << "-----::::::::" << count << endl;
 					for (int i = 0; i < lianXian.size() / 2; i++)//连线方向
 					{
 						vector<float>temp(3, 0), norm;
-						for (int k = 0; k < 3; k++)temp[k] = gt2[julei4_line[i * 2]][k] - gt2[julei4_line[i * 2 + 1]][k];
+						for (int k = 0; k < 3; k++)temp[k] = gt2[lianXian[i * 2]][k] - gt2[lianXian[i * 2 + 1]][k];
 						norm = NormalizationUnit(temp);
 						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
 					}
 
-
-					cout << count << endl;
+					cout << "-----::::::::"<<count << endl;
 					//点到四肢部分 直线距离
 					for (int i = 0; i < zhiduanlianXian.size()/2; i++)
 					{
@@ -1322,6 +1323,10 @@ vector<float> PoseMeasure::getPlaneNorm(vector<vector<float>>&part)
 	norm = NormalizationUnit(temp);//单位化
 	return norm;
 }
+/*
+20180104
+计算两个向量的夹角 弧度
+*/
 float PoseMeasure::getTwoNormalAngle(vector<float>&normal1, vector<float>&normal2)
 {
 	
@@ -1332,4 +1337,72 @@ float PoseMeasure::getTwoNormalAngle(vector<float>&normal1, vector<float>&normal
 	//cout << "cosTheta:" << cosTheta << " " << "acos(cosTheta):" << acos(cosTheta) << endl;
 	 
 	return cosTheta;
+}
+/*
+20180104
+将搜索的结果图拼接起来显示
+*/
+void FileTool::resultPicMerge()
+{
+	string  path = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion\\";
+
+	int N = 22;
+	vector<Mat>input(N);
+
+	/*vector<int> picindex = { 71120, 91190, 71150, 71230, 71130, 71110, 81180, 71140, 81190, 81020, 81010,
+	71120, 71130, 91110, 71210, 71140, 81020, 71220, 71200, 81190, 91120,91180 };*/
+	vector<int> picindex;
+	vector<float>floatindex;
+	
+	ReadFile("E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\index.txt", floatindex);
+
+	for (auto f : floatindex)picindex.push_back((int)f);
+
+
+	for (int i = 0; i < N; i++)
+	{
+		stringstream ss;
+		ss << path << "action" << picindex[i] / 10000 << "\\people" << (picindex[i] / 1000) % 10 << "\\" << picindex[i] % 1000 << ".jpg";
+		cout << ss.str() << endl;
+		input[i] = imread(ss.str());
+	}
+
+	Size bigsize(input[0].cols * N / 2, input[0].rows * 2);//合并后图片size 宽*高
+
+	vector<Mat>temp(N);
+
+	Mat mergefinal;
+	mergefinal.create(bigsize, CV_MAKETYPE(input[0].depth(), 3));//rgb 3通道
+	mergefinal = Scalar::all(0);
+
+	for (int i = 0; i < N; i++)
+	{
+		if (i<N / 2)temp[i] = mergefinal(Rect(i*input[0].cols, 0, input[0].cols, input[0].rows));
+		else temp[i] = mergefinal(Rect((i - N / 2)*input[0].cols, input[0].rows, input[0].cols, input[0].rows));
+		input[i].copyTo(temp[i]); //copy图片到对应位置
+	}
+
+	imshow("merge", mergefinal);
+	imwrite("E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\81120点线面与关节.jpg", mergefinal);
+
+	waitKey(0);
+}
+// 读取文件
+bool FileTool::ReadFile(string filePath, vector<float>&errorVec)
+{
+	errorVec.clear();
+	ifstream infile(filePath);
+	float x;
+	if (!infile.is_open())
+	{
+		cout << "不能打开文件----" << filePath << endl;
+		return false;
+	}
+	while (!infile.eof())
+	{
+		infile >> x;
+		errorVec.push_back(x);
+	}
+	errorVec.pop_back();
+	return true;
 }
