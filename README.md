@@ -8,6 +8,8 @@
 
 + **getTestResults** 测试结果、显示构造特征、merge图像。
 
++ **PoseMeasure** 将构造姿态特征部分抽离出来
+
 ----
 
 
