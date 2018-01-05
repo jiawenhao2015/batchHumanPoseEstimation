@@ -33,11 +33,11 @@ int main()
 
 //	pm.creatClusterFeatureDianxianmian(7, 9, 1, 1, 0, 299,4);
 	int k = 11;
-	int testindex = 81120;
+	int testindex = 81150;
 	pm.testknn(true, k, testindex, 7, 9, 1, 1, 0, 299,"W_bsm7-9dianxianmian.txt",138,5, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	pm.testknn(false, k, testindex, 7, 9, 1, 1, 0, 299, "W_bsm7-9guanjie.txt", 60,10, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 
-	ft.resultPicMerge();
+	ft.resultPicMerge(testindex);
 	
 	//	pm.get3dFea(9, 9, 1, 1, 0, 199,4);//特征点3维坐标  最后一个参数是代表是几个特征点 默认3维
 	//	pm.get3dGT(9, 9, 1, 1, 0, 199);//关节点3维坐标

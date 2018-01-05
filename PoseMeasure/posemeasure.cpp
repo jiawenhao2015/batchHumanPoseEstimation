@@ -1342,7 +1342,7 @@ float PoseMeasure::getTwoNormalAngle(vector<float>&normal1, vector<float>&normal
 20180104
 将搜索的结果图拼接起来显示
 */
-void FileTool::resultPicMerge()
+void FileTool::resultPicMerge(int testindex)
 {
 	string  path = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion\\";
 
@@ -1383,7 +1383,9 @@ void FileTool::resultPicMerge()
 	}
 
 	imshow("merge", mergefinal);
-	imwrite("E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\81120点线面与关节.jpg", mergefinal);
+	stringstream ss;
+	ss << "E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\" << testindex << "点线面与关节.jpg";
+	imwrite(ss.str(), mergefinal);
 
 	waitKey(0);
 }

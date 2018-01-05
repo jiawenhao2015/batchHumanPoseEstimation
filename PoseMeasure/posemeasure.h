@@ -27,7 +27,7 @@ public:
 	void Read2Fea(string matrixPath, vector<vector<int>>& vec);
 	void Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp);
 	Mat InitMat(string matrixPath, int m, int n, bool containlabel, int& label);
-	void  resultPicMerge();
+	void  resultPicMerge(int testindex);
 	bool ReadFile(string filePath, vector<float>&errorVec);
 
 };
