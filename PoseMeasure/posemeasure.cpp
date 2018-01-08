@@ -1167,19 +1167,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 				ofstream of(p2);
 				int label = action;
 
-				if (dim == 3)
-				{
-					for (int i = 0; i < JULEI_line_Num; i++)
-					{
-						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
-
-						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
-					}
-				}
+				
 				if (dim == 4)
 				{//关节到四肢上的关节的直线的距离
 					//肢端关节连线方向
@@ -1247,6 +1235,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 	}
 	fea.close();
 }
+
 /*
 Ax+by+cz=D 拟合平面
 http://blog.csdn.net/zhouyelihua/article/details/46122977
@@ -1407,4 +1396,108 @@ bool FileTool::ReadFile(string filePath, vector<float>&errorVec)
 	}
 	errorVec.pop_back();
 	return true;
+}
+
+/*
+ 构造点线面相关的姿态特征 增加 线与面的角度等约束
+20180108
+*/
+void  PoseMeasure::creatClusterFeatureDianxianmianJiao(int actionBegin, int actionEnd,
+	int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim)
+{
+	int count = 0;
+	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+
+	stringstream  ss;
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureDianxianmian.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int people = peopleBegin; people <= peopleEnd; people++)
+		{
+			if (people == 3) continue;
+			for (int index = indexBegin; index <= indexEnd; index++)
+			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
+
+				vector<vector<float>> gt2;
+				stringstream  ss2, ss3;
+
+				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
+				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
+
+				string p3 = ss3.str(), p2 = ss2.str();
+
+				cout << p3 << endl;
+				filetool.ReadmidGT(p3, gt2);
+
+				ofstream of(p2);
+				int label = action;
+
+				if (dim == 4)
+				{//关节到四肢上的关节的直线的距离
+					//肢端关节连线方向
+					cout << "lianxiansize():" << lianXian.size() << endl;
+					for (int i = 0; i < lianXian.size() / 2; i++)//连线距离
+					{
+						fea << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << " ";
+						count++;
+						of << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << endl;
+					}
+					cout << "-----::::::::" << count << endl;
+					for (int i = 0; i < lianXian.size() / 2; i++)//连线方向
+					{
+						vector<float>temp(3, 0), norm;
+						for (int k = 0; k < 3; k++)temp[k] = gt2[lianXian[i * 2]][k] - gt2[lianXian[i * 2 + 1]][k];
+						norm = NormalizationUnit(temp);
+						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
+					}
+
+					cout << "-----::::::::" << count << endl;
+					//点到四肢部分 直线距离
+					for (int i = 0; i < zhiduanlianXian.size() / 2; i++)
+					{
+						S_Point lineEnd1(gt2[zhiduanlianXian[2 * i]]), lineEnd2(gt2[zhiduanlianXian[2 * i + 1]]);//直线两端
+						S_Point pt1(gt2[xuyaoqiujulidedian[i][0]]), pt2(gt2[xuyaoqiujulidedian[i][1]]);
+						double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);
+						double dis2 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt2);
+
+						fea << dis1 << " "; of << dis1 << endl; count++;
+						fea << dis2 << " "; of << dis2 << endl; count++;
+					}
+					//面的相关信息。。 4个平面法向量 之间方向
+					//首先求4个平面法向量
+					vector<vector<float>>norm(4);
+					for (int i = 0; i < 4; i++)
+					{
+						vector<vector<float>> part;//每个部位里面4个点
+						for (int j = 0; j < 4; j++)
+						{
+							part.push_back(gt2[bodypart[i][j]]);
+						}
+						norm[i] = getPlaneNorm(part);
+					}
+					//求法向量之间夹角
+
+					for (int i = 0; i < 4; i++)
+					{
+						for (int j = i + 1; j < 4; j++)
+						{
+							float angle = getTwoNormalAngle(norm[i], norm[j]);
+							fea << angle << " "; of << angle << endl; count++;
+						}
+					}
+
+				}
+				fea << label << endl;
+				of << label << endl;
+				of.close();
+				count++;
+				cout << "----------------------------" << count << "----------------------------" << endl;
+				count = 0;
+			}
+		}
+	}
+	fea.close();
 }

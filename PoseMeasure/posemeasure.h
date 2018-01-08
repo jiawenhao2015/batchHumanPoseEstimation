@@ -54,6 +54,9 @@ public:
 	void  creatClusterFeature4(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 	void  creatClusterFeatureDianxianmian(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim = 3);
 
+	void creatClusterFeatureDianxianmianJiao(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim);
+
+
 	void Normalization(Mat& mat);
 	int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
 		Mat& matrix, int k, string prefix, int actionBegin, int actionEnd, string matrixName);
