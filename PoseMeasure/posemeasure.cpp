@@ -597,6 +597,9 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	int label=0, n = trainSample.size();
 	map<float, vector<int>>mp;//记录距离与训练集的索引 距离从小到大排列
 
+	map<int, float>mpdis;//记录索引帧对应的距离。。。
+
+
 	ofstream of(prefix + "\\" + to_string(actionBegin) + "-" + to_string(actionEnd) + matrixName+"distance.txt");
 
 	for (int i = 0; i < n; i++)
@@ -1373,7 +1376,7 @@ void FileTool::resultPicMerge(int testindex)
 
 	imshow("merge", mergefinal);
 	stringstream ss;
-	ss << "E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\" << testindex << "点线面与关节.jpg";
+	ss << "E:\\laboratory\\batchHumanPoseEstimation\\getTestResults\\" << testindex << "138vs108.jpg";
 	imwrite(ss.str(), mergefinal);
 
 	waitKey(0);
