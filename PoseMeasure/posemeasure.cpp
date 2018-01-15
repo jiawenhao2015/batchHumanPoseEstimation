@@ -597,7 +597,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	int label=0, n = trainSample.size();
 	map<float, vector<int>>mp;//记录距离与训练集的索引 距离从小到大排列
 
-	map<int, float>mpdis;//记录索引帧对应的距离。。。
+	map<int, float>indexMpDis;//记录索引帧对应的距离。。。
 
 
 	ofstream of(prefix + "\\" + to_string(actionBegin) + "-" + to_string(actionEnd) + matrixName+"distance.txt");
@@ -612,7 +612,8 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 		float distance = dis.at<float>(0, 0);
 
 		of << distance << " ";
-		mp[distance].push_back(i);
+		mp[distance].push_back(i);//距离对应的索引
+		indexMpDis[indexmp[i]] = distance;//索引对应的距离
 	}
 	of << endl;
 	of.close();
@@ -628,7 +629,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	{
 		for (int j = 0; j < it->second.size() && k>0; j++)
 		{
-			cout << indexmp[it->second[j]] << endl;
+			cout << indexmp[it->second[j]] << "---" << indexMpDis[indexmp[it->second[j]]] << endl;
 			k--;
 			indexfile << indexmp[it->second[j]] << " ";
 		}
@@ -765,8 +766,8 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 			indexInVec = it->first;
 		}
 	}
-	knn(trainSample, trainLabel, testSample[indexInVec], indexInVec, matrix, k, prefix, actionBegin, actionEnd, matrixName);
-
+	label = knn(trainSample, trainLabel, testSample[indexInVec], indexInVec, matrix, k, prefix, actionBegin, actionEnd, matrixName);
+	cout << "label:"<<label << endl;
 
 	//	for (int i = startindex; i < testSample.size(); i++)
 	//	{
@@ -805,7 +806,6 @@ void PoseMeasure::jiaozhun()
 			}
 		}
 	}
-
 }
 //调整头部聚类特征点位置 
 //20171217    81116缺好几个聚类点 91145缺1个聚类点 标号为2
@@ -1136,6 +1136,7 @@ double PoseMeasure::DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s)
 结合论文，构造点线面相关的姿态特征。
 20180103
 */
+
 void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,
 	int peopleBegin, int peopleEnd,int indexBegin, int indexEnd,int dim)
 {
@@ -1224,7 +1225,6 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 							fea << angle << " "; of << angle << endl; count++;
 						}
 					}
-
 				}
 
 				fea << label << endl;
@@ -1503,4 +1503,43 @@ void  PoseMeasure::creatClusterFeatureDianxianmianJiao(int actionBegin, int acti
 		}
 	}
 	fea.close();
+}
+/*
+标定动作label 20180115
+*/
+
+vector<vector<int>>startend =
+{
+	{ 71000 , 71040 },
+	{ 71041 , 71090 },
+	{ 71091 , 71150 },
+	{ 71151 , 71200 },
+	{ 71201 , 71240 },
+	{ 71241 , 71299 },
+	{ 81000, 81050 },
+	{ 81051, 81100 },
+	{ 81101, 81140 },
+	{ 81141, 81199 },
+	{91000,91070},
+	{91071,91100},
+	{91101,91199}
+};
+
+void PoseMeasure::SetLabel(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd)
+{
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int people = peopleBegin; people <= peopleEnd; people++)
+		{
+			for (int index = indexBegin; index <= indexEnd; index++)
+			{
+				int ind = action * 10000 + people * 1000 + index;
+
+				if (ind>=71000 && ind<)
+
+			}
+		}
+	}
+
+
 }

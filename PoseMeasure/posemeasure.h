@@ -73,7 +73,7 @@ public:
 	void adjustNotOnBody(vector<vector<int>>& gt2);
 	void adjustNotOnBody();
 	void jiaozhun();
-
+	void SetLabel(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd);
 
 	float EucDis(vector<float>&a, vector<float>&b);
 	vector<float> NormalizationUnit(vector<float>&a);
@@ -86,7 +86,7 @@ public:
 	float getTwoNormalAngle(vector<float>&norm1, vector<float>&norm2);
 	FileTool filetool;
 
-
+	map<int, int>mplabel;//索引对应的标签
 
 	map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。
 	map<int, int>indexmptest;//记录ceshi集里面的帧的索引
