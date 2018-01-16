@@ -1506,6 +1506,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmianJiao(int actionBegin, int acti
 }
 /*
 标定动作label 20180115
+每一个区间一个动作label
 */
 
 vector<vector<int>>startend =
@@ -1525,21 +1526,13 @@ vector<vector<int>>startend =
 	{91101,91199}
 };
 
-void PoseMeasure::SetLabel(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd)
+int PoseMeasure::SetLabel(int action, int people, int index)
 {
-	for (int action = actionBegin; action <= actionEnd; action++)
+	int ind = action * 10000 + people * 1000 + index;
+	int i =  0;
+	for (;i < startend.size();i++)
 	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				int ind = action * 10000 + people * 1000 + index;
-
-				if (ind>=71000 && ind<)
-
-			}
-		}
+		if (ind >= startend[i][0] && ind<= startend[i][1]) break;
 	}
-
-
+	return i;//索引就作为label
 }

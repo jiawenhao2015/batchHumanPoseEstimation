@@ -73,7 +73,7 @@ public:
 	void adjustNotOnBody(vector<vector<int>>& gt2);
 	void adjustNotOnBody();
 	void jiaozhun();
-	void SetLabel(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd);
+	int SetLabel(int action, int people, int index);
 
 	float EucDis(vector<float>&a, vector<float>&b);
 	vector<float> NormalizationUnit(vector<float>&a);
