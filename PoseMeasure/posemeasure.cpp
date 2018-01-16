@@ -357,7 +357,7 @@ void  PoseMeasure::creatGroundTruthFeature(int actionBegin, int actionEnd,
 				filetool.ReadmidGT(p3, gt2);
 
 				ofstream of(p2);
-				int label = action;
+				int label = SetLabel(action, people, index);
 				for (int i = 0; i < XUNI_line_Num; i++)
 				{
 					of << gt2[xuni_line[i * 2]][0] - gt2[xuni_line[i * 2 + 1]][0] << " "
@@ -625,12 +625,14 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	cout << "测试帧索引：" << indexmptest[testindex] << endl;
 
 	//输出前k个距离最小的帧
-	for (auto it = mp.begin(); it != mp.end() && k > 0; it++)
+	int backupK = k;
+	for (auto it = mp.begin(); it != mp.end() && backupK > 0; it++)
 	{
-		for (int j = 0; j < it->second.size() && k>0; j++)
+		for (int j = 0; j < it->second.size() && backupK>0; j++)
 		{
-			cout << indexmp[it->second[j]] << "---" << indexMpDis[indexmp[it->second[j]]] << endl;
-			k--;
+			cout << indexmp[it->second[j]] << "---" << indexMpDis[indexmp[it->second[j]]]
+				<< "---label:" << trainLabel[it->second[j]] << endl;
+			backupK--;
 			indexfile << indexmp[it->second[j]] << " ";
 		}
 	}
@@ -1169,20 +1171,20 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 				filetool.ReadmidGT(p3, gt2);
 
 				ofstream of(p2);
-				int label = action;
+				int label = SetLabel(action,people,index);
 
 				
 				if (dim == 4)
 				{//关节到四肢上的关节的直线的距离
 					//肢端关节连线方向
-					cout << "lianxiansize():"<<lianXian.size() << endl;
+					
 					for (int i = 0; i < lianXian.size()/2; i++)//连线距离
 					{
 						fea << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << " ";
 						count++;
 						of << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << endl;
 					}
-					cout << "-----::::::::" << count << endl;
+					
 					for (int i = 0; i < lianXian.size() / 2; i++)//连线方向
 					{
 						vector<float>temp(3, 0), norm;
@@ -1190,8 +1192,7 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 						norm = NormalizationUnit(temp);
 						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
 					}
-
-					cout << "-----::::::::"<<count << endl;
+					
 					//点到四肢部分 直线距离
 					for (int i = 0; i < zhiduanlianXian.size()/2; i++)
 					{
