@@ -378,7 +378,97 @@ void  PoseMeasure::creatGroundTruthFeature(int actionBegin, int actionEnd,
 
 	fea.close();
 }
+//构造groundtruth姿态识别特征   
+// 增加点线面
 
+void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int actionEnd,
+	int peopleBegin, int peopleEnd,
+	int indexBegin, int indexEnd)
+{
+	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
+
+	stringstream  ss;
+	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featurenew.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int people = peopleBegin; people <= peopleEnd; people++)
+		{
+			if (people == 3) continue;
+			for (int index = indexBegin; index <= indexEnd; index++)
+			{
+				if (action == 8 || action == 9){ if (index >= 200)continue; }
+
+				vector<vector<float>> gt2;
+				stringstream  ss2, ss3;
+
+				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
+				ss2 << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
+
+				string p3 = ss3.str();
+				string p2 = ss2.str();
+
+				cout << p3 << endl;
+				filetool.ReadmidGT(p3, gt2);
+
+				ofstream of(p2);
+				int label = SetLabel(action, people, index);
+				for (int i = 0; i < XUNI_line_Num; i++)//连线距离
+				{
+					of << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";				
+					fea << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";
+				}
+				for (int i = 0; i < XUNI_line_Num; i++)//连线方向
+				{
+					vector<float>temp(3, 0), norm;
+					for (int k = 0; k < 3; k++)temp[k] = gt2[xuni_line[i * 2]][k] - gt2[xuni_line[i * 2 + 1]][k];
+					norm = NormalizationUnit(temp);
+					for (int k = 0; k < 3; k++){ fea << norm[k] << " ";of << norm[k] << endl; }
+				}
+
+				//点到四肢部分 直线距离
+				for (int i = 0; i < guanjielianXian.size() / 2; i++)
+				{
+					S_Point lineEnd1(gt2[guanjielianXian[2 * i]]), lineEnd2(gt2[guanjielianXian[2 * i + 1]]);//直线两端
+					S_Point pt1(gt2[guanjiexuyaoqiujulidedian[i][0]]);
+					double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);					
+
+					fea << dis1 << " "; of << dis1 << endl; 				
+				}
+
+				//面的相关信息。。 4个平面法向量 之间方向
+				//首先求4个平面法向量
+				vector<vector<float>>norm(4);
+				for (int i = 0; i < 4; i++)
+				{
+					vector<vector<float>> part;//每个部位里面3个点
+					for (int j = 0; j < 3; j++)
+					{
+						part.push_back(gt2[guanjiepart[i][j]]);
+					}
+					norm[i] = getPlaneNorm(part);
+				}
+				//求法向量之间夹角
+
+				for (int i = 0; i < 4; i++)
+				{
+					for (int j = i + 1; j < 4; j++)
+					{
+						float angle = getTwoNormalAngle(norm[i], norm[j]);
+						fea << angle << " "; of << angle << endl;
+					}
+				}
+
+				of << label << endl;
+				fea << label << endl;
+				of.close();
+			}
+		}
+	}
+
+	fea.close();
+}
 //构造聚类特征点的   姿态识别特征  一共22*3=66维
 //输出22行 前3维是3维特征 最后一是label
 //20171128
@@ -608,9 +698,9 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 
 		Mat dis = diff * matrix * matrix.t() * diff.t();//不开方了
 
-		cout << i << "距离---" << " " << dis << indexmp[i] << endl;
+		//cout << i << "距离---" << " " << dis << indexmp[i] << endl;
 		float distance = dis.at<float>(0, 0);
-
+		if (distance == 0)continue;//距离=0说明是本身 去除
 		of << distance << " ";
 		mp[distance].push_back(i);//距离对应的索引
 		indexMpDis[indexmp[i]] = distance;//索引对应的距离
@@ -696,7 +786,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 				cout << path << endl;
 				normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//归一化
 
-				//if (index % 10 == 0)//取样做为测试
+				if (index % 3 == 0)//取样做为测试
 				{
 					indexmptest[testSample.size()] = action * 10000 + people * 1000 + index;
 
@@ -760,7 +850,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 
 	//startindex 是指数组下标索引  现在需要转换一下 比如输入测试帧直接是图片名称而不是在数组中的下标了
 
-	int indexInVec = 0;
+	/*int indexInVec = 0;
 	for (auto it = indexmptest.begin(); it != indexmptest.end(); it++)
 	{
 		if (it->second == startindex)
@@ -771,15 +861,26 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	label = knn(trainSample, trainLabel, testSample[indexInVec], indexInVec, matrix, k, prefix, actionBegin, actionEnd, matrixName);
 	cout << "label:"<<label << endl;
 
-	//	for (int i = startindex; i < testSample.size(); i++)
-	//	{
-	//		label = knn(trainSample, trainLabel, testSample[i],i, matrix, k,prefix,actionBegin,actionEnd);
-	//		if (label == testLabel[i])
-	//		{
-	//			correct++; 
-	//		}
-	//	}
-	//	cout << correct << "/" << testSample.size() << endl;
+	if (label == testLabel[indexInVec])
+	{
+		correct++;
+		cout << "correct!" << endl;
+	}*/
+	cout << "开始测试：" << endl; correct = 0;
+	for (int i = 0; i < testSample.size();i++)
+	{
+		
+		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
+		cout << "label:" << label << endl;
+
+		if (label == testLabel[i])
+		{
+			correct++;
+			cout << "correct!" << endl;
+		}
+	}
+	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
+
 }
 
 
