@@ -416,7 +416,7 @@ void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int acti
 				int label = SetLabel(action, people, index);
 				for (int i = 0; i < XUNI_line_Num; i++)//连线距离
 				{
-					of << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";				
+					of << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << endl;
 					fea << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";
 				}
 				for (int i = 0; i < XUNI_line_Num; i++)//连线方向
@@ -835,7 +835,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		if (dim == 4)
 		{
 			//row = 1, col = 27 * 3;//groundtruth是60=20*3列  聚类特征是22*3=66 
-			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 5, false, label);
+			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 10, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange, 4);
 		}
 	}
@@ -843,7 +843,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	{
 		prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
 		//row = 1, col = 60;
-		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 5, false, label);
+		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
 		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange);
 	}
 
