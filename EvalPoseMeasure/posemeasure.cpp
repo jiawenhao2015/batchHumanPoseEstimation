@@ -1,5 +1,5 @@
 ﻿/*
-1.处理虚拟数据 生成纯3维坐标 groundtruth
+1.处理eval数据 生成纯3维坐标 groundtruth
 2.构造用于姿态识别的特征
 3.增加姿态特征维度。
 */
@@ -185,7 +185,7 @@ void FileTool::Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 	return;
 }
 //读入5维groundtruth 查找对应3维空间坐标。得到3维groundtruth
-//2017.11.27
+//20180119
 int PoseMeasure::get3dGT(int actionBegin, int actionEnd,int indexBegin, int indexEnd)
 {
 	string jointprefix = "D:\\EVAL20170704\\EVAL\\joints\\";
@@ -231,8 +231,6 @@ int PoseMeasure::get3dGT(int actionBegin, int actionEnd,int indexBegin, int inde
 	system("PAUSE");
 	return 0;
 }
-
-
 
 //读入2维图像坐标 读入5维点云 查找对应3维空间坐标。得到特征点在3维空间中的位置
 //20180119
@@ -305,305 +303,92 @@ int PoseMeasure::get3dFea(int actionBegin, int actionEnd,int indexBegin, int ind
 	return 0;
 }
 
-
-
-//构造groundtruth姿态识别特征  一共20*3=60维
-//输出20行 前3维是3维特征 最后一是label
-
-void  PoseMeasure::creatGroundTruthFeature(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd)
-{
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
-
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
-
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = SetLabel(action, people, index);
-				for (int i = 0; i < XUNI_line_Num; i++)
-				{
-					of << gt2[xuni_line[i * 2]][0] - gt2[xuni_line[i * 2 + 1]][0] << " "
-						<< gt2[xuni_line[i * 2]][1] - gt2[xuni_line[i * 2 + 1]][1] << " "
-						<< gt2[xuni_line[i * 2]][2] - gt2[xuni_line[i * 2 + 1]][2] << " ";
-
-					fea << gt2[xuni_line[i * 2]][0] - gt2[xuni_line[i * 2 + 1]][0] << " "
-						<< gt2[xuni_line[i * 2]][1] - gt2[xuni_line[i * 2 + 1]][1] << " "
-						<< gt2[xuni_line[i * 2]][2] - gt2[xuni_line[i * 2 + 1]][2] << " ";
-
-				}
-				of << label << endl;
-				fea << label << endl;
-				of.close();
-			}
-		}
-	}
-
-	fea.close();
-}
-//构造groundtruth姿态识别特征   
-// 增加点线面
-
-void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd)
-{
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
-
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featurenew.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
-
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = SetLabel(action, people, index);
-				for (int i = 0; i < XUNI_line_Num; i++)//连线距离
-				{
-					of << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << endl;
-					fea << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";
-				}
-				for (int i = 0; i < XUNI_line_Num; i++)//连线方向
-				{
-					vector<float>temp(3, 0), norm;
-					for (int k = 0; k < 3; k++)temp[k] = gt2[xuni_line[i * 2]][k] - gt2[xuni_line[i * 2 + 1]][k];
-					norm = NormalizationUnit(temp);
-					for (int k = 0; k < 3; k++){ fea << norm[k] << " ";of << norm[k] << endl; }
-				}
-
-				//点到四肢部分 直线距离
-				for (int i = 0; i < guanjielianXian.size() / 2; i++)
-				{
-					S_Point lineEnd1(gt2[guanjielianXian[2 * i]]), lineEnd2(gt2[guanjielianXian[2 * i + 1]]);//直线两端
-					S_Point pt1(gt2[guanjiexuyaoqiujulidedian[i][0]]);
-					double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);					
-
-					fea << dis1 << " "; of << dis1 << endl; 				
-				}
-
-				//面的相关信息。。 4个平面法向量 之间方向
-				//首先求4个平面法向量
-				vector<vector<float>>norm(4);
-				for (int i = 0; i < 4; i++)
-				{
-					vector<vector<float>> part;//每个部位里面3个点
-					for (int j = 0; j < 3; j++)
-					{
-						part.push_back(gt2[guanjiepart[i][j]]);
-					}
-					norm[i] = getPlaneNorm(part);
-				}
-				//求法向量之间夹角
-
-				for (int i = 0; i < 4; i++)
-				{
-					for (int j = i + 1; j < 4; j++)
-					{
-						float angle = getTwoNormalAngle(norm[i], norm[j]);
-						fea << angle << " "; of << angle << endl;
-					}
-				}
-
-				of << label << endl;
-				fea << label << endl;
-				of.close();
-			}
-		}
-	}
-
-	fea.close();
-}
-//构造聚类特征点的   姿态识别特征  一共22*3=66维
-//输出22行 前3维是3维特征 最后一是label
-//20171128
+//void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int actionEnd,	int indexBegin, int indexEnd)
+//{
+//	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
 //
-void  PoseMeasure::creatClusterFeature(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd,
-	int dim)
-{
-	//string prefix = "E:\\laboratory\\dataset\\synthesisdata\\finalskeletonFEATUREPOINT\\results";
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature4.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
-
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = action;
-
-				if (dim == 3)
-				{
-					for (int i = 0; i < JULEI_line_Num; i++)
-					{
-						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
-
-						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
-					}
-				}
-				if (dim == 4)
-				{
-					for (int i = 0; i < JULEI4_line_Num; i++)
-					{
-						of << gt2[julei4_line[i * 2]][0] - gt2[julei4_line[i * 2 + 1]][0] << " "
-							<< gt2[julei4_line[i * 2]][1] - gt2[julei4_line[i * 2 + 1]][1] << " "
-							<< gt2[julei4_line[i * 2]][2] - gt2[julei4_line[i * 2 + 1]][2] << endl;
-
-						fea << gt2[julei4_line[i * 2]][0] - gt2[julei4_line[i * 2 + 1]][0] << " "
-							<< gt2[julei4_line[i * 2]][1] - gt2[julei4_line[i * 2 + 1]][1] << " "
-							<< gt2[julei4_line[i * 2]][2] - gt2[julei4_line[i * 2 + 1]][2] << " ";
-					}
-				}
-				of << label << endl;
-				fea << label << endl;
-				of.close();
-			}
-		}
-	}
-	fea.close();
-}
-
-//构造聚类特征点的   姿态识别特征   
-// 前3维是3维特征 最后一是label  3*(5+10) = 45
-//20171211
-//新特征 每一个部位三个聚类中心在求中心 作为该部位特征
-void  PoseMeasure::creatClusterFeature2(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd)
-{
-	//string prefix = "E:\\laboratory\\dataset\\synthesisdata\\finalskeletonFEATUREPOINT\\results";
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_feature2.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				vector<vector<float>> gt2;
-
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\featurePoints3d.txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature2.txt";
-
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				//首先构造特征
-
-				vector<vector<float>> abcdeo(6, vector<float>(3, 0));//o和5个部位3维坐标	再考虑用5个肢端！怎么样	
-				abcdeo[0] = gt2[0];
-				for (int i = 0; i < 3; i++)
-				{
-					abcdeo[1][i] = (gt2[1][i] + gt2[2][i] + gt2[3][i]) / 3;
-					abcdeo[2][i] = (gt2[4][i] + gt2[5][i] + gt2[6][i]) / 3;
-					abcdeo[3][i] = (gt2[7][i] + gt2[8][i] + gt2[9][i]) / 3;
-					abcdeo[4][i] = (gt2[10][i] + gt2[11][i] + gt2[12][i]) / 3;
-					abcdeo[5][i] = (gt2[13][i] + gt2[14][i] + gt2[15][i]) / 3;
-				}
-
-				for (int i = 1; i <= 5; i++)
-				{
-					for (int j = 0; j < 3; j++)
-					{
-						fea << abcdeo[i][j] - abcdeo[0][j] << " ";//4肢和头 与中心点的距离 
-					}
-				}
-				for (int i = 1; i <= 5; i++)
-				{
-					for (int j = i + 1; j <= 5; j++)
-					{
-						for (int k = 0; k < 3; k++)
-						{
-							fea << abcdeo[i][k] - abcdeo[j][k] << " ";
-						}
-					}
-				}
-
-				int label = action;
-
-				fea << label << endl;
-
-			}
-		}
-	}
-	fea.close();
-}
+//	stringstream  ss;
+//	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featurenew.txt";//最后一维是标签
+//	string p1 = ss.str();
+//	ofstream fea(p1);
+//	for (int action = actionBegin; action <= actionEnd; action++)
+//	{
+//		for (int people = peopleBegin; people <= peopleEnd; people++)
+//		{
+//			
+//			for (int index = indexBegin; index <= indexEnd; index++)
+//			{
+//				if (action == 8 || action == 9){ if (index >= 200)continue; }
+//
+//				vector<vector<float>> gt2;
+//				stringstream  ss2, ss3;
+//
+//				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
+//				ss2 << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
+//
+//				string p3 = ss3.str();
+//				string p2 = ss2.str();
+//
+//				cout << p3 << endl;
+//				filetool.ReadmidGT(p3, gt2);
+//
+//				ofstream of(p2);
+//				int label = SetLabel(action, people, index);
+//				for (int i = 0; i < XUNI_line_Num; i++)//连线距离
+//				{
+//					of << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << endl;
+//					fea << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";
+//				}
+//				for (int i = 0; i < XUNI_line_Num; i++)//连线方向
+//				{
+//					vector<float>temp(3, 0), norm;
+//					for (int k = 0; k < 3; k++)temp[k] = gt2[xuni_line[i * 2]][k] - gt2[xuni_line[i * 2 + 1]][k];
+//					norm = NormalizationUnit(temp);
+//					for (int k = 0; k < 3; k++){ fea << norm[k] << " ";of << norm[k] << endl; }
+//				}
+//
+//				//点到四肢部分 直线距离
+//				for (int i = 0; i < guanjielianXian.size() / 2; i++)
+//				{
+//					S_Point lineEnd1(gt2[guanjielianXian[2 * i]]), lineEnd2(gt2[guanjielianXian[2 * i + 1]]);//直线两端
+//					S_Point pt1(gt2[guanjiexuyaoqiujulidedian[i][0]]);
+//					double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);					
+//
+//					fea << dis1 << " "; of << dis1 << endl; 				
+//				}
+//
+//				//面的相关信息。。 4个平面法向量 之间方向
+//				//首先求4个平面法向量
+//				vector<vector<float>>norm(4);
+//				for (int i = 0; i < 4; i++)
+//				{
+//					vector<vector<float>> part;//每个部位里面3个点
+//					for (int j = 0; j < 3; j++)
+//					{
+//						part.push_back(gt2[guanjiepart[i][j]]);
+//					}
+//					norm[i] = getPlaneNorm(part);
+//				}
+//				//求法向量之间夹角
+//
+//				for (int i = 0; i < 4; i++)
+//				{
+//					for (int j = i + 1; j < 4; j++)
+//					{
+//						float angle = getTwoNormalAngle(norm[i], norm[j]);
+//						fea << angle << " "; of << angle << endl;
+//					}
+//				}
+//
+//				of << label << endl;
+//				fea << label << endl;
+//				of.close();
+//			}
+//		}
+//	}
+//
+//	fea.close();
+//}
 
 
 //读取一个txt 返回一个m*n的矩阵 训练数据里面包含label 最后一个数字是label
@@ -642,7 +427,6 @@ Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& l
 	}
 	return mat;
 }
-
 
 
 //特征向量归一化
@@ -835,22 +619,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 
 	//startindex 是指数组下标索引  现在需要转换一下 比如输入测试帧直接是图片名称而不是在数组中的下标了
 
-	/*int indexInVec = 0;
-	for (auto it = indexmptest.begin(); it != indexmptest.end(); it++)
-	{
-		if (it->second == startindex)
-		{
-			indexInVec = it->first;
-		}
-	}
-	label = knn(trainSample, trainLabel, testSample[indexInVec], indexInVec, matrix, k, prefix, actionBegin, actionEnd, matrixName);
-	cout << "label:"<<label << endl;
-
-	if (label == testLabel[indexInVec])
-	{
-		correct++;
-		cout << "correct!" << endl;
-	}*/
+	
 	cout << "开始测试：" << endl; correct = 0;
 	for (int i = 0; i < testSample.size();i++)
 	{
@@ -869,143 +638,6 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 }
 
 
-//校准groundtruth 将关节点y坐标更改
-//20171206
-void PoseMeasure::jiaozhun()
-{
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
-	for (int action = 7; action <= 7; action++)
-	{
-		for (int people = 1; people <= 1; people++)
-		{
-			for (int index = 226; index <= 290; index++)
-			{
-				vector<vector<int>> gt2;
-				stringstream ss1;
-
-				ss1 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth" << index << ".txt";
-
-				string p1 = ss1.str();
-
-				cout << p1 << endl;
-				filetool.Read2GT(p1, gt2);
-				gt2[5][1] += 2;//6号关节点偏上 往下调整一下
-				filetool.Write2GT(p1, gt2);
-			}
-		}
-	}
-}
-//调整头部聚类特征点位置 
-//20171217    81116缺好几个聚类点 91145缺1个聚类点 标号为2
-int PoseMeasure::minDistance(vector<int>&input, vector<vector<int>>& gt2, vector<bool>&flag)
-{
-	//返回距离input最近的点  下标
-	float mindis = 9999999.0;
-	int minIndex = 2;
-	for (int i = 2; i <= 4; i++)
-	{
-		if (flag[i] == false)//未更改
-		{
-			int t = (gt2[i][0] - input[0])*(gt2[i][0] - input[0]) + (gt2[i][1] - input[1])*(gt2[i][1] - input[1]);
-
-			if (t < mindis)
-			{
-				mindis = t;
-				minIndex = i;
-			}
-		}
-	}
-	flag[minIndex] = true;//用过 标记
-	return minIndex;
-}
-void PoseMeasure::adjustClusterPoint(vector<vector<int>>& gt2)
-{
-	vector<vector<int>> temp = gt2;
-	vector<bool>flag(5, false);
-	int nearIndex = 2;
-	nearIndex = minDistance(gt2[8], gt2, flag);//距离8最近的作为3
-	temp[3] = gt2[nearIndex];
-
-	nearIndex = minDistance(gt2[12], gt2, flag);//距离12最近的作为4
-	temp[4] = gt2[nearIndex];
-
-	for (int i = 2; i <= 4; i++)if (flag[i] == false)nearIndex = i;
-	temp[2] = gt2[nearIndex];//另外一个作为2;
-
-	gt2 = temp;
-}
-void PoseMeasure::adjustClusterPoint()
-{
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-	for (int action = 8; action <= 8; action++)
-	{
-		for (int people = 1; people <= 1; people++)
-		{
-			for (int index = 116; index <= 116; index++)
-			{
-				//if (index==145)continue;
-
-				vector<vector<int>> gt2;
-				stringstream ss1;
-
-				ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints.txt";
-
-				string p1 = ss1.str();
-
-				cout << p1 << endl;
-				filetool.Read2Fea(p1, gt2);
-
-				adjustClusterPoint(gt2);
-
-				ss1.str("");
-				ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
-				filetool.Write2Fea(ss1.str(), gt2);
-			}
-		}
-	}
-
-}
-
-
-//20171221需要一个判断聚类点是否在人体上的函数
-
-void PoseMeasure::adjustNotOnBody(vector<vector<int>>& gt2)
-{
-	vector<vector<int>> temp = gt2;
-
-
-
-	gt2 = temp;
-}
-void PoseMeasure::adjustNotOnBody()
-{
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-	for (int action = 8; action <= 8; action++)
-	{
-		for (int people = 1; people <= 1; people++)
-		{
-			for (int index = 116; index <= 116; index++)
-			{
-				vector<vector<int>> gt2;
-				stringstream ss1;
-
-				ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
-
-				string p1 = ss1.str();
-
-				cout << p1 << endl;
-				filetool.Read2Fea(p1, gt2);
-
-				adjustNotOnBody(gt2);
-
-				ss1.str("");
-				ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
-				filetool.Write2Fea(ss1.str(), gt2);
-			}
-		}
-	}
-}
-
 
 //求两个三维点欧式距离
 float PoseMeasure::EucDis(vector<float>&a, vector<float>&b)
@@ -1023,188 +655,7 @@ vector<float>  PoseMeasure::NormalizationUnit(vector<float>&a)
 	for (int i = 0; i < 3; i++)ret[i] = a[i] / sqrt(length);	
 	return ret;
 }
-//构造聚类特征点的   姿态识别特征   
-// 前3维是3维特征 最后一是label   
-//20171227
-//构造聚类特征点的   姿态识别特征  一共22*3=66 +  =   维
-// 前3维是3维特征 最后一个数是label
 
-//每一对聚类点之间距离 每一对聚类点之间方向
-void  PoseMeasure::creatClusterFeature3(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd,
-	int dim)
-{
-	int count = 0;
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureNew.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = action;
-
-				if (dim == 3)
-				{
-					for (int i = 0; i < JULEI_line_Num; i++)
-					{
-						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
-						
-						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
-					}
-				}
-				if (dim == 4)
-				{					
-					for (int i = 0; i < gt2.size();i++)//每一对聚类点之间距离
-					{
-						for (int j = i + 1; j < gt2.size();j++)
-						{
-							fea << EucDis(gt2[i], gt2[j]) << " ";
-							count++;
-							of << EucDis(gt2[i], gt2[j]) <<endl;
-						}
-					}
-					
-					for (int i = 0; i < gt2.size(); i++ )//每一对聚类点之间方向
-					{
-						for (int j = i + 1; j < gt2.size(); j++)
-						{
-							vector<float>temp(3,0),norm;
-							for (int k = 0; k < 3;k++)temp[k] = gt2[i][k] - gt2[j][k];								
-							norm = NormalizationUnit(temp);
-							for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] <<endl; }
-						}
-					}
-				}
-				of << label << endl;
-				of.close();
-				fea << label << endl;
-				count++;
-				//cout << "----------------------------" << count << "----------------------------" << endl;
-				count = 0;
-			}
-		}
-	}
-	
-	fea.close();
-}
-
-
-//之前求的特征 只用到了坐标差 没用到距离
-//构造聚类特征点的   姿态识别特征   
-// 前3维是3维特征 最后一是label   
-//20171228
-//构造聚类特征点的   姿态识别特征  一共22*3=66 +  =   维
-// 前3维是3维特征 最后一个数是label
-
-//关节点连线之间方向，关节点之间距离
-void  PoseMeasure::creatClusterFeature4(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd,
-	int dim)
-{
-	int count = 0;
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureLianxian.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
-			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
-
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = action;
-
-				if (dim == 3)
-				{
-					for (int i = 0; i < JULEI_line_Num; i++)
-					{
-						fea << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << " ";
-
-						of << gt2[julei_line[i * 2]][0] - gt2[julei_line[i * 2 + 1]][0] << " "
-							<< gt2[julei_line[i * 2]][1] - gt2[julei_line[i * 2 + 1]][1] << " "
-							<< gt2[julei_line[i * 2]][2] - gt2[julei_line[i * 2 + 1]][2] << endl;
-					}
-				}
-				if (dim == 4)
-				{
-					for (int i = 0; i < JULEI4_line_Num; i++)//连线距离
-					{
-						fea << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2+1]]) << " ";
-						count++;
-						of << EucDis(gt2[julei4_line[i * 2]], gt2[julei4_line[i * 2 + 1]]) <<endl;
-					}
-					for (int i = 0; i < JULEI4_line_Num; i++)//连线方向
-					{
-						
-						vector<float>temp(3, 0), norm;
-						for (int k = 0; k < 3; k++)temp[k] = gt2[julei4_line[i * 2]][k] - gt2[julei4_line[i * 2 + 1]][k];
-						norm = NormalizationUnit(temp);
-						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] <<endl; }
-					}
-				}
-
-				fea << label << endl;
-				of << label << endl;
-				of.close();
-				count++;
-				cout << "----------------------------" << count << "----------------------------" << endl;
-				count = 0;
-			}
-		}
-	}
-
-	fea.close();
-}
-
-
-//20180103
 /*
 假设给出空间中的三个点：A，B，C，求点C到由点A、B构成的直线的距离。
 d = (AB x AC)/|AB|
@@ -1221,106 +672,84 @@ double PoseMeasure::DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s)
 	return as*sin_A*as*sin_A;//距离的平方
 }
 /*
-结合论文，构造点线面相关的姿态特征。
-20180103
+构造点线面相关的姿态特征。
+20180119
 */
 
-void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,int indexBegin, int indexEnd,int dim)
+void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,int indexBegin, int indexEnd,int dim)
 {
-	int count = 0;
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+	string prefix = "D:\\EVAL20170704\\EVAL\\depth\\";
 
 	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureDianxianmian.txt";//最后一维是标签
+	ss << prefix <<  actionBegin << "-" << actionEnd << "bsm_all_featurenew.txt";//最后一维是标签
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
+		for (int index = indexBegin; index <= indexEnd; index++)
+		{			
+			vector<vector<float>> gt2;
+			stringstream  ss2, ss3;
+			ss3 << prefix << action << "\\" << index << "\\featurePoints3d.txt";			
+			ss2 << prefix << action << "\\" << index << "\\3dfeature.txt";
+
+			string p3 = ss3.str(), p2 = ss2.str();
+
+			ifstream ifexist(p3);
+			if (!ifexist.is_open())	continue;
+
+			cout << p3 << endl;
+			filetool.ReadmidGT(p3, gt2);
+
+			ofstream of(p2);
+			int label = action;
+			for (int i = 0; i < JULEI_line_Num; i++)//连线距离
 			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
-
-				string p3 = ss3.str();
-				string p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = SetLabel(action,people,index);
-
-				
-				if (dim == 4)
-				{//关节到四肢上的关节的直线的距离
-					//肢端关节连线方向
-					
-					for (int i = 0; i < lianXian.size()/2; i++)//连线距离
-					{
-						fea << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << " ";
-						count++;
-						of << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << endl;
-					}
-					
-					for (int i = 0; i < lianXian.size() / 2; i++)//连线方向
-					{
-						vector<float>temp(3, 0), norm;
-						for (int k = 0; k < 3; k++)temp[k] = gt2[lianXian[i * 2]][k] - gt2[lianXian[i * 2 + 1]][k];
-						norm = NormalizationUnit(temp);
-						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
-					}
-					
-					//点到四肢部分 直线距离
-					for (int i = 0; i < zhiduanlianXian.size()/2; i++)
-					{
-						S_Point lineEnd1(gt2[zhiduanlianXian[2 * i]]), lineEnd2(gt2[zhiduanlianXian[2 * i+1]]);//直线两端
-						S_Point pt1(gt2[xuyaoqiujulidedian[i][0]]), pt2(gt2[xuyaoqiujulidedian[i][1]]);
-						double dis1 = DistanceOfPointToLine(&lineEnd1,&lineEnd2, &pt1);
-						double dis2 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt2);
-
-						fea << dis1 << " "; of << dis1 << endl; count++;
-						fea << dis2 << " "; of << dis2 << endl; count++;
-					}
-					//面的相关信息。。 4个平面法向量 之间方向
-					//首先求4个平面法向量
-					vector<vector<float>>norm(4);
-					for (int i = 0; i < 4;i++)
-					{
-						vector<vector<float>> part;//每个部位里面4个点
-						for (int j = 0; j < 4;j++)
-						{
-							part.push_back(gt2[bodypart[i][j]]);
-						}
-						norm[i] = getPlaneNorm(part);
-					}
-					//求法向量之间夹角
-
-					for (int i = 0; i < 4; i++)
-					{
-						for (int j = i + 1; j < 4;j++)
-						{
-							float angle = getTwoNormalAngle(norm[i], norm[j]);
-							fea << angle << " "; of << angle << endl; count++;
-						}
-					}
-				}
-
-				fea << label << endl;
-				of << label << endl;
-				of.close();
-				count++;
-				cout << "----------------------------" << count << "----------------------------" << endl;
-				count = 0;
+				of << EucDis(gt2[julei_line[i * 2]], gt2[julei_line[i * 2 + 1]]) << endl;
+				fea << EucDis(gt2[julei_line[i * 2]], gt2[julei_line[i * 2 + 1]]) << " ";
 			}
+			for (int i = 0; i < JULEI_line_Num; i++)//连线方向
+			{
+				vector<float>temp(3, 0), norm;
+				for (int k = 0; k < 3; k++)temp[k] = gt2[julei_line[i * 2]][k] - gt2[julei_line[i * 2 + 1]][k];
+				norm = NormalizationUnit(temp);
+				for (int k = 0; k < 3; k++){ fea << norm[k] << " "; of << norm[k] << endl; }
+			}
+
+			//点到四肢部分 直线距离
+			for (int i = 0; i < juleilianXian.size() / 2; i++)
+			{
+				S_Point lineEnd1(gt2[juleilianXian[2 * i]]), lineEnd2(gt2[juleilianXian[2 * i + 1]]);//直线两端
+				S_Point pt1(gt2[juleixuyaoqiujulidedian[i][0]]);
+				double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);
+
+				fea << dis1 << " "; of << dis1 << endl;
+			}
+
+			//面的相关信息。。 4个平面法向量 之间方向
+			//首先求4个平面法向量
+			vector<vector<float>>norm(4);
+			for (int i = 0; i < 4; i++)
+			{
+				vector<vector<float>> part;//每个部位里面3个点
+				for (int j = 0; j < 3; j++)
+				{
+					part.push_back(gt2[juleipart[i][j]]);
+				}
+				norm[i] = getPlaneNorm(part);
+			}
+			//求法向量之间夹角
+			for (int i = 0; i < 4; i++)
+			{
+				for (int j = i + 1; j < 4; j++)
+				{
+					float angle = getTwoNormalAngle(norm[i], norm[j]);
+					fea << angle << " "; of << angle << endl;
+				}
+			}
+			of << label << endl;
+			fea << label << endl;
+			of.close();
 		}
 	}
 	fea.close();
@@ -1410,11 +839,7 @@ float PoseMeasure::getTwoNormalAngle(vector<float>&normal1, vector<float>&normal
 {
 	
 	float cosTheta;
-	cosTheta = abs(normal1[0] * normal2[0] + normal1[1] * normal2[1] + normal1[2] * normal2[2]) / (sqrt(normal1[0] * normal1[0] + normal1[1] * normal1[1] + normal1[2] * normal1[2])*sqrt(normal2[0] * normal2[0] + normal2[1] * normal2[1] + normal2[2] * normal2[2]));
-
-	//if (cosTheta >= 1.0)return 0.0;	
-	//cout << "cosTheta:" << cosTheta << " " << "acos(cosTheta):" << acos(cosTheta) << endl;
-	 
+	cosTheta = abs(normal1[0] * normal2[0] + normal1[1] * normal2[1] + normal1[2] * normal2[2]) / (sqrt(normal1[0] * normal1[0] + normal1[1] * normal1[1] + normal1[2] * normal1[2])*sqrt(normal2[0] * normal2[0] + normal2[1] * normal2[1] + normal2[2] * normal2[2]));	 
 	return cosTheta;
 }
 /*
@@ -1488,138 +913,64 @@ bool FileTool::ReadFile(string filePath, vector<float>&errorVec)
 	return true;
 }
 
-/*
- 构造点线面相关的姿态特征 增加 线与面的角度等约束
-20180108
-*/
-void  PoseMeasure::creatClusterFeatureDianxianmianJiao(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim)
+//有缺失的行 使用上一帧数据
+void FileTool::jiaozheng()
 {
-	int count = 0;
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+	string buff;	
 
-	stringstream  ss;
-	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featureDianxianmian.txt";//最后一维是标签
-	string p1 = ss.str();
-	ofstream fea(p1);
-	for (int action = actionBegin; action <= actionEnd; action++)
+	string prefix = "D:\\EVAL20170704\\EVAL\\depth\\";
+	for (int action = 0; action <= 7; action++)
 	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
+		for (int index = 0; index <= 450; index++)
 		{
-			if (people == 3) continue;
-			for (int index = indexBegin; index <= indexEnd; index++)
+			vector<vector<float>> gt2;
+			stringstream  ss3;
+			ss3 << prefix << action << "\\" << index << "\\featurePoints3d.txt";
+
+			ifstream infile(ss3.str());
+			if (!infile.is_open())	{ cout << ss3.str() << endl; continue; }
+			
+			int linenum = 0;
+			vector <int> queshao;
+			while (getline(infile, buff))//按行读取
 			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				vector<vector<float>> gt2;
-				stringstream  ss2, ss3;
-
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
-
-				string p3 = ss3.str(), p2 = ss2.str();
-
-				cout << p3 << endl;
-				filetool.ReadmidGT(p3, gt2);
-
-				ofstream of(p2);
-				int label = action;
-
-				if (dim == 4)
-				{//关节到四肢上的关节的直线的距离
-					//肢端关节连线方向
-					cout << "lianxiansize():" << lianXian.size() << endl;
-					for (int i = 0; i < lianXian.size() / 2; i++)//连线距离
-					{
-						fea << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << " ";
-						count++;
-						of << EucDis(gt2[lianXian[i * 2]], gt2[lianXian[i * 2 + 1]]) << endl;
-					}
-					cout << "-----::::::::" << count << endl;
-					for (int i = 0; i < lianXian.size() / 2; i++)//连线方向
-					{
-						vector<float>temp(3, 0), norm;
-						for (int k = 0; k < 3; k++)temp[k] = gt2[lianXian[i * 2]][k] - gt2[lianXian[i * 2 + 1]][k];
-						norm = NormalizationUnit(temp);
-						for (int k = 0; k < 3; k++){ fea << norm[k] << " "; count++; of << norm[k] << endl; }
-					}
-
-					cout << "-----::::::::" << count << endl;
-					//点到四肢部分 直线距离
-					for (int i = 0; i < zhiduanlianXian.size() / 2; i++)
-					{
-						S_Point lineEnd1(gt2[zhiduanlianXian[2 * i]]), lineEnd2(gt2[zhiduanlianXian[2 * i + 1]]);//直线两端
-						S_Point pt1(gt2[xuyaoqiujulidedian[i][0]]), pt2(gt2[xuyaoqiujulidedian[i][1]]);
-						double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);
-						double dis2 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt2);
-
-						fea << dis1 << " "; of << dis1 << endl; count++;
-						fea << dis2 << " "; of << dis2 << endl; count++;
-					}
-					//面的相关信息。。 4个平面法向量 之间方向
-					//首先求4个平面法向量
-					vector<vector<float>>norm(4);
-					for (int i = 0; i < 4; i++)
-					{
-						vector<vector<float>> part;//每个部位里面4个点
-						for (int j = 0; j < 4; j++)
-						{
-							part.push_back(gt2[bodypart[i][j]]);
-						}
-						norm[i] = getPlaneNorm(part);
-					}
-					//求法向量之间夹角
-
-					for (int i = 0; i < 4; i++)
-					{
-						for (int j = i + 1; j < 4; j++)
-						{
-							float angle = getTwoNormalAngle(norm[i], norm[j]);
-							fea << angle << " "; of << angle << endl; count++;
-						}
-					}
-
+				if (buff.size() == 0)//说明缺少这一行
+				{					
+					queshao.push_back(linenum);
+					gt2.push_back({ 0, 0, 0 });//占位；
 				}
-				fea << label << endl;
-				of << label << endl;
-				of.close();
-				count++;
-				cout << "----------------------------" << count << "----------------------------" << endl;
-				count = 0;
+				else
+				{					
+					stringstream bs(buff);
+					vector<float> temp(3);
+					bs >> temp[0] >> temp[1] >> temp[2];
+					gt2.push_back(temp);
+				}
+				linenum++;
+			}			 
+			if (queshao.size()!=0)//读取上一帧
+			{				
+				vector<vector<float>> gt;
+				stringstream  sss;
+				sss << prefix << action << "\\" << index-1 << "\\featurePoints3d.txt";				 
+				
+				cout << "读取上一帧:" << sss.str()<< endl;
+				ReadmidGT(sss.str(), gt);
+
+				for (int i = 0; i < queshao.size();i++)gt2[queshao[i]] = gt[queshao[i]];//将上一帧对应的特征赋值给这一帧					 
+				
+				ofstream outfile(ss3.str());//重新输出调整后的
+				for (int i = 0; i < gt2.size(); i++)
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						outfile << gt2[i][j] << " ";
+					}
+					outfile << endl;
+				}
+				outfile.close();
 			}
 		}
 	}
-	fea.close();
-}
-/*
-标定动作label 20180115
-每一个区间一个动作label
-*/
-
-vector<vector<int>>startend =
-{
-	{ 71000 , 71040 },
-	{ 71041 , 71090 },
-	{ 71091 , 71150 },
-	{ 71151 , 71200 },
-	{ 71201 , 71240 },
-	{ 71241 , 71299 },
-	{ 81000, 81050 },
-	{ 81051, 81100 },
-	{ 81101, 81140 },
-	{ 81141, 81199 },
-	{91000,91070},
-	{91071,91100},
-	{91101,91199}
-};
-
-int PoseMeasure::SetLabel(int action, int people, int index)
-{
-	int ind = action * 10000 + people * 1000 + index;
-	int i =  0;
-	for (;i < startend.size();i++)
-	{
-		if (ind >= startend[i][0] && ind<= startend[i][1]) break;
-	}
-	return i;//索引就作为label
+		 
 }
