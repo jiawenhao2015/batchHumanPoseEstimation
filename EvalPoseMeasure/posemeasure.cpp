@@ -161,6 +161,7 @@ void FileTool::Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 		while (!matrixFile.eof())
 		{
 			matrixFile >> x >> y >> a >> b >> c;
+			y = 240 - y;
 			xVec.push_back(x), yVec.push_back(y);
 			aVec.push_back(a), bVec.push_back(b), cVec.push_back(c);
 		}
@@ -183,62 +184,48 @@ void FileTool::Read3GT(string matrixPath, map<vector<int>, vector<float>>& mp)
 	}
 	return;
 }
-//读入2维图像坐标 读入5维groundtruth 查找对应3维空间坐标。得到3维groundtruth
+//读入5维groundtruth 查找对应3维空间坐标。得到3维groundtruth
 //2017.11.27
-int PoseMeasure::get3dGT(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd)
+int PoseMeasure::get3dGT(int actionBegin, int actionEnd,int indexBegin, int indexEnd)
 {
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
+	string jointprefix = "D:\\EVAL20170704\\EVAL\\joints\\";
+	
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
-		{
-			for (int index = indexBegin; index <= indexEnd; index++)
+		for (int index = indexBegin; index <= indexEnd; index++)
+		{			
+			stringstream ss1,ss3;						
+
+			ss1 << jointprefix <<"joint"<< action << "_" << index << ".txt";
+			ss3 << jointprefix << "joint3d" << action << "_" << index << ".txt";
+		
+			string p1 = ss1.str(), p3 = ss3.str();
+
+			ifstream ifexist(p1);
+			if (!ifexist.is_open())	continue;
+
+			cout << p1 << endl;
+			
+
+			ifstream matrixFile(p1);
+			int x, y;
+			float a, b, c;
+			
+			vector<float>aVec, bVec, cVec;
+			while (!matrixFile.eof())
 			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-				vector<vector<int>> gt2;
-				map <vector<int>, vector<float>> mp;
-				stringstream ss1, ss2, ss3;
+				matrixFile >> x >> y >> a >> b >> c;			
+				aVec.push_back(a), bVec.push_back(b), cVec.push_back(c);
+			}			
+			aVec.pop_back(), bVec.pop_back(), cVec.pop_back();
+			
 
-				ss1 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth" << index << ".txt";
-				ss2 << prefix << "\\action" << action << "\\people" << people << "\\output" << index << ".txt";
-				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
-
-				string p1 = ss1.str();
-				string p2 = ss2.str();
-				string p3 = ss3.str();
-
-
-				cout << p1 << endl;
-				filetool.Read2GT(p1, gt2);
-				filetool.Read3GT(p2, mp);
-
-				ofstream of(p3);
-				for (int i = 0; i < gt2.size(); i++)
-				{
-					vector<int>tt = gt2[i];
-					vector<float> gt3 = mp[tt];
-					if (gt3.size() == 0)//如果不在点云里面说明关节点不在人体上
-					{
-						cout << action << "-----" << people << "-----" << i << "------------不在人体上!" << endl;
-
-						tt[0] += 2;//往右平移2个像素
-						gt3 = mp[tt];
-						if (gt3.size() == 0)
-						{
-							tt[0] -= 4;//不行就往左两个像素
-							gt3 = mp[tt];
-						}
-					}
-					for (int j = 0; j < gt3.size(); j++)
-					{
-						of << gt3[j] << " ";
-					}
-					of << endl;
-				}
-				of.close();
+			ofstream of(p3);
+			for (int i = 0; i < aVec.size(); i++)
+			{
+				of << aVec[i] << " " << bVec[i] << " "<<cVec[i] <<endl;
 			}
+			of.close();
 		}
 	}
 	system("PAUSE");
@@ -248,73 +235,71 @@ int PoseMeasure::get3dGT(int actionBegin, int actionEnd,
 
 
 //读入2维图像坐标 读入5维点云 查找对应3维空间坐标。得到特征点在3维空间中的位置
-//2017.12.01   17.12.16添加一个参数，代表特征点维数
-int PoseMeasure::get3dFea(int actionBegin, int actionEnd,
-	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd,
-	int dim)
+//20180119
+int PoseMeasure::get3dFea(int actionBegin, int actionEnd,int indexBegin, int indexEnd,int dim)
 {
-	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
-	string output = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
+	string feaprefix = "D:\\EVAL20170704\\EVAL\\depth\\";
+	string pointclocdprefix = "D:\\EVAL20170704\\EVAL\\depth\\";
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
+		for (int index = indexBegin; index <= indexEnd; index++)
 		{
-			for (int index = indexBegin; index <= indexEnd; index++)
+			vector<vector<int>> gt2;
+			map <vector<int>, vector<float>> mp;
+			stringstream ss1, ss2, ss3;
+
+			if (dim == 4)
 			{
-				vector<vector<int>> gt2;
-				map <vector<int>, vector<float>> mp;
-				stringstream ss1, ss2, ss3;
-
-				if (dim == 4)
-				{
-					ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
-					ss2 << output << "\\action" << action << "\\people" << people << "\\output" << index << ".txt";
-					ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
-				}
-				else//dim==3
-				{
-					ss1 << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\featurePoints.txt";
-					ss2 << output << "\\action" << action << "\\people" << people << "\\output" << index << ".txt";
-					ss3 << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\featurePoints3d.txt";
-				}
-
-				string p1 = ss1.str();
-				string p2 = ss2.str();
-				string p3 = ss3.str();
-
-				cout << p1 << endl;
-				filetool.Read2Fea(p1, gt2);
-				filetool.Read3GT(p2, mp);
-
-				ofstream of(p3);
-				for (int i = 0; i < gt2.size(); i++)
-				{
-					vector<int>tt = gt2[i];
-					vector<float> gt3 = mp[tt];
-
-					if (gt3.size() == 0)//如果不在点云里面说明 特征点不在人体上
-					{
-						cout << i << "------------不在人体上!" << endl;
-
-						tt[0] += 2;//往右平移2个像素
-						gt3 = mp[tt];
-						if (gt3.size() == 0)
-						{
-							tt[0] -= 4;//不行就往左两个像素
-							gt3 = mp[tt];
-						}
-					}
-					for (int j = 0; j < gt3.size(); j++)
-					{
-						of << gt3[j] << " ";
-					}
-
-					of << endl;
-				}
-				of.close();
+				//ss1 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePointsAdjust.txt";
+				//ss2 << output << "\\action" << action << "\\people" << people << "\\output" << index << ".txt";
+				//ss3 << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\featurePoints3d.txt";
 			}
-		}
+			else//dim==3
+			{
+				ss1 << feaprefix << action << "\\" << index << "\\featurePoints.txt";
+				ss2 << pointclocdprefix << "\\depth" << action << "_" << index << ".txt";
+				ss3 << feaprefix << action << "\\" << index <<"\\featurePoints3d.txt";
+			}
+
+			string p1 = ss1.str();
+			string p2 = ss2.str();
+			string p3 = ss3.str();
+
+
+			ifstream ifexist(p1);			
+			if (!ifexist.is_open())	continue;
+
+			cout << p1 << endl;
+			filetool.Read2Fea(p1, gt2);
+			filetool.Read3GT(p2, mp);
+
+			ofstream of(p3);
+			for (int i = 0; i < gt2.size(); i++)
+			{
+				vector<int>tt = gt2[i];
+				vector<float> gt3 = mp[tt];
+
+				if (gt3.size() == 0)//如果不在点云里面说明 特征点不在人体上
+				{
+					cout << i << "------------不在人体上!" << endl;
+
+					tt[0] += 2;//往右平移2个像素
+					gt3 = mp[tt];
+					if (gt3.size() == 0)
+					{
+						tt[0] -= 4;//不行就往左两个像素
+						gt3 = mp[tt];
+					}
+				}
+				for (int j = 0; j < gt3.size(); j++)
+				{
+					of << gt3[j] << " ";
+				}
+
+				of << endl;
+			}
+			of.close();
+		}		
 	}
 	system("PAUSE");
 	return 0;
@@ -835,7 +820,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		if (dim == 4)
 		{
 			//row = 1, col = 27 * 3;//groundtruth是60=20*3列  聚类特征是22*3=66 
-			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 5, false, label);
+			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 10, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange, 4);
 		}
 	}
@@ -843,7 +828,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	{
 		prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
 		//row = 1, col = 60;
-		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 5, false, label);
+		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
 		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange);
 	}
 
