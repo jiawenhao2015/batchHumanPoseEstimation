@@ -302,93 +302,85 @@ int PoseMeasure::get3dFea(int actionBegin, int actionEnd,int indexBegin, int ind
 	system("PAUSE");
 	return 0;
 }
+//20180120
+void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int actionEnd,	int indexBegin, int indexEnd)
+{
+	string prefix = "D:\\EVAL20170704\\EVAL\\joints\\";
 
-//void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int actionEnd,	int indexBegin, int indexEnd)
-//{
-//	string prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
-//
-//	stringstream  ss;
-//	ss << prefix << "\\" << actionBegin << "-" << actionEnd << "bsm_all_featurenew.txt";//最后一维是标签
-//	string p1 = ss.str();
-//	ofstream fea(p1);
-//	for (int action = actionBegin; action <= actionEnd; action++)
-//	{
-//		for (int people = peopleBegin; people <= peopleEnd; people++)
-//		{
-//			
-//			for (int index = indexBegin; index <= indexEnd; index++)
-//			{
-//				if (action == 8 || action == 9){ if (index >= 200)continue; }
-//
-//				vector<vector<float>> gt2;
-//				stringstream  ss2, ss3;
-//
-//				ss3 << prefix << "\\action" << action << "\\people" << people << "\\groundTruth3d" << index << ".txt";
-//				ss2 << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
-//
-//				string p3 = ss3.str();
-//				string p2 = ss2.str();
-//
-//				cout << p3 << endl;
-//				filetool.ReadmidGT(p3, gt2);
-//
-//				ofstream of(p2);
-//				int label = SetLabel(action, people, index);
-//				for (int i = 0; i < XUNI_line_Num; i++)//连线距离
-//				{
-//					of << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << endl;
-//					fea << EucDis(gt2[xuni_line[i * 2]], gt2[xuni_line[i * 2 + 1]]) << " ";
-//				}
-//				for (int i = 0; i < XUNI_line_Num; i++)//连线方向
-//				{
-//					vector<float>temp(3, 0), norm;
-//					for (int k = 0; k < 3; k++)temp[k] = gt2[xuni_line[i * 2]][k] - gt2[xuni_line[i * 2 + 1]][k];
-//					norm = NormalizationUnit(temp);
-//					for (int k = 0; k < 3; k++){ fea << norm[k] << " ";of << norm[k] << endl; }
-//				}
-//
-//				//点到四肢部分 直线距离
-//				for (int i = 0; i < guanjielianXian.size() / 2; i++)
-//				{
-//					S_Point lineEnd1(gt2[guanjielianXian[2 * i]]), lineEnd2(gt2[guanjielianXian[2 * i + 1]]);//直线两端
-//					S_Point pt1(gt2[guanjiexuyaoqiujulidedian[i][0]]);
-//					double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);					
-//
-//					fea << dis1 << " "; of << dis1 << endl; 				
-//				}
-//
-//				//面的相关信息。。 4个平面法向量 之间方向
-//				//首先求4个平面法向量
-//				vector<vector<float>>norm(4);
-//				for (int i = 0; i < 4; i++)
-//				{
-//					vector<vector<float>> part;//每个部位里面3个点
-//					for (int j = 0; j < 3; j++)
-//					{
-//						part.push_back(gt2[guanjiepart[i][j]]);
-//					}
-//					norm[i] = getPlaneNorm(part);
-//				}
-//				//求法向量之间夹角
-//
-//				for (int i = 0; i < 4; i++)
-//				{
-//					for (int j = i + 1; j < 4; j++)
-//					{
-//						float angle = getTwoNormalAngle(norm[i], norm[j]);
-//						fea << angle << " "; of << angle << endl;
-//					}
-//				}
-//
-//				of << label << endl;
-//				fea << label << endl;
-//				of.close();
-//			}
-//		}
-//	}
-//
-//	fea.close();
-//}
+	stringstream  ss;
+	ss << prefix << actionBegin << "-" << actionEnd << "bsm_joint_featurenew.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int index = indexBegin; index <= indexEnd; index++)
+		{
+			vector<vector<float>> gt2;
+			stringstream  ss2, ss3;
+			ss3 << prefix << "joint3d" << action << "_" << index << ".txt";			
+			ss2 << prefix << "3dfeaturejoint" << action << "_" << index << ".txt";
+
+			string p3 = ss3.str(), p2 = ss2.str();
+
+			ifstream ifexist(p3);
+			if (!ifexist.is_open())	continue;
+
+			cout << p3 << endl;
+			filetool.ReadmidGT(p3, gt2);
+
+			ofstream of(p2);
+			int label = action;
+
+			for (int i = 0; i < Newline_Num; i++)//连线距离
+			{
+				of << EucDis(gt2[newline[i * 2]], gt2[newline[i * 2 + 1]]) << endl;
+				fea << EucDis(gt2[newline[i * 2]], gt2[newline[i * 2 + 1]]) << " ";
+			}
+			for (int i = 0; i < Newline_Num; i++)//连线方向
+			{
+				vector<float>temp(3, 0), norm;
+				for (int k = 0; k < 3; k++)temp[k] = gt2[newline[i * 2]][k] - gt2[newline[i * 2 + 1]][k];
+				norm = NormalizationUnit(temp);
+				for (int k = 0; k < 3; k++){ fea << norm[k] << " "; of << norm[k] << endl; }
+			}
+
+			//点到四肢部分 直线距离
+			for (int i = 0; i < guanjielianXian.size() / 2; i++)
+			{
+				S_Point lineEnd1(gt2[guanjielianXian[2 * i]]), lineEnd2(gt2[guanjielianXian[2 * i + 1]]);//直线两端
+				S_Point pt1(gt2[guanjiexuyaoqiujulidedian[i][0]]);
+				double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);
+
+				fea << dis1 << " "; of << dis1 << endl;
+			}
+			//面的相关信息。。 2个平面法向量 之间方向
+			//首先求2个平面法向量
+			vector<vector<float>>norm(4);
+			for (int i = 0; i < 2; i++)
+			{
+				vector<vector<float>> part;//每个部位里面3个点
+				for (int j = 0; j < 3; j++)
+				{
+					part.push_back(gt2[guanjiepart[i][j]]);
+				}
+				norm[i] = getPlaneNorm(part);
+			}
+			//求法向量之间夹角
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = i + 1; j < 2; j++)
+				{
+					float angle = getTwoNormalAngle(norm[i], norm[j]);
+					fea << angle << " "; of << angle << endl;
+				}
+			}
+			of << label << endl;
+			fea << label << endl;
+			of.close();
+		}
+	}
+	fea.close();
+}
 
 
 //读取一个txt 返回一个m*n的矩阵 训练数据里面包含label 最后一个数字是label
@@ -725,7 +717,6 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 
 				fea << dis1 << " "; of << dis1 << endl;
 			}
-
 			//面的相关信息。。 4个平面法向量 之间方向
 			//首先求4个平面法向量
 			vector<vector<float>>norm(4);
@@ -916,8 +907,7 @@ bool FileTool::ReadFile(string filePath, vector<float>&errorVec)
 //有缺失的行 使用上一帧数据
 void FileTool::jiaozheng()
 {
-	string buff;	
-
+	string buff;
 	string prefix = "D:\\EVAL20170704\\EVAL\\depth\\";
 	for (int action = 0; action <= 7; action++)
 	{
@@ -971,6 +961,5 @@ void FileTool::jiaozheng()
 				outfile.close();
 			}
 		}
-	}
-		 
+	}		 
 }
