@@ -6,18 +6,18 @@ enum NewJoint_Num
 };
 enum NewJoint
 {	
-	j1 = 1,
-	j2 = 2,
-	j3 = 3,
-	j4 = 4,
-	j5 = 5,
-	j6 = 6,
-	j7 = 7,
-	j8 = 8,
-	j9 = 9,
-	j10 = 10,
-	j11 = 11,
-	j12 = 12	
+	jj1 = 0,
+	j2 = 1,
+	j3 = 2,
+	j4 = 3,
+	j5 = 4,
+	j6 = 5,
+	j7 = 6,
+	j8 = 7,
+	j9 = 8,
+	j10 = 9,
+	j11 = 10,
+	j12 = 11	
 };
 NewJoint newline[Newline_Num * 2] =
 {
@@ -30,8 +30,7 @@ NewJoint newline[Newline_Num * 2] =
 	 j9,j10,
 	 j11,j12,
 	 j5,j3,
-	 j6,j8
-	 
+	 j6,j8	 
 };
 //类似手到肩膀等4肢直线
 vector<int> guanjielianXian =
