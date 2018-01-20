@@ -21,7 +21,7 @@ int main()
 	PoseMeasure pm;
 	FileTool ft;
 
-	pm.creatGroundTruthFeatureDianxianmian(0, 7, 0, 450);//
+	pm.creatGroundTruthFeatureDianxianmian(0, 7, 0, 450);//43ά
 
 //	ft.jiaozheng();
 //	pm.creatClusterFeatureDianxianmian(0,7,0, 450);//102weidu
