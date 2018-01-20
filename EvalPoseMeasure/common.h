@@ -1,80 +1,55 @@
 ////////新的关节点特征构造
 enum NewJoint_Num
 {
-	NewJointNum = 15,
-	Newline_Num = 24
+	NewJointNum = 12,
+	Newline_Num = 10
 };
 enum NewJoint
-{
-	hi0 = 0,
-	chest1 = 1,
-	neck2 = 2,
-	lShldr3 = 3,
-	lForeArm4 = 4,
-	lHand5 = 5,
-	rShldr6 = 6,
-	rForeArm7 = 7,
-	rHand8 = 8,
-	lThigh9 = 9,
-	lShin10 = 10,
-	lFoot11 = 11,
-	rThigh12 = 12,
-	rShin13 = 13,
-	rFoot14 = 14
+{	
+	j1 = 1,
+	j2 = 2,
+	j3 = 3,
+	j4 = 4,
+	j5 = 5,
+	j6 = 6,
+	j7 = 7,
+	j8 = 8,
+	j9 = 9,
+	j10 = 10,
+	j11 = 11,
+	j12 = 12	
 };
 NewJoint newline[Newline_Num * 2] =
 {
-	//主
-	rHand8, chest1,
-	neck2, chest1,
-	chest1, lHand5,
-	chest1, hi0,
-	hi0, rFoot14,
-	hi0, lFoot11,
-
-	rHand8,rShldr6,
-	lShldr3,lHand5,
-	rThigh12,rFoot14,
-	lThigh9,lFoot11,
-	//整体
-	rHand8, rForeArm7,
-	rForeArm7, rShldr6,
-	rShldr6, neck2,
-	rShldr6, chest1,
-	neck2, lShldr3,
-	chest1, lShldr3,
-	lShldr3, lForeArm4,
-	lForeArm4, lHand5,
-	chest1, rThigh12,
-	chest1, lThigh9,
-	rThigh12, rShin13,
-	lThigh9, lShin10,
-	lShin10, lFoot11,
-	rShin13, rFoot14
+	 j5,j4,
+	 j4,j3,
+	 j3,j2,
+	 j2,j6,
+	 j6,j7,
+	 j7,j8,
+	 j9,j10,
+	 j11,j12,
+	 j5,j3,
+	 j6,j8
+	 
 };
 //类似手到肩膀等4肢直线
 vector<int> guanjielianXian =
 {
-	rHand8, rShldr6,
-	lShldr3, lHand5,
-	rThigh12, rFoot14,
-	lThigh9, lFoot11
+	j5, j3,
+	j6, j8
 };
 //需要求距离的点
 vector<vector<int>> guanjiexuyaoqiujulidedian =
 {
-	{ rForeArm7 },
-	{ lForeArm4 },
-	{ rShin13 },
-	{ lShin10 }
+	{ j4 },
+	{ j7 }	
 };
 //身体部位 4肢
 vector<vector<int>> guanjiepart =
 {
-	{ rHand8, rForeArm7,rShldr6 },
-	{ lShldr3, lForeArm4,lHand5 },
-	{ rThigh12, rShin13, rFoot14 },
-	{ lThigh9, lShin10, lFoot11 }
+	{ j5,j4,j3},
+	{ j6,j7,j8}
 };
 
 //-------------------------------------------------------------------3个特征点
