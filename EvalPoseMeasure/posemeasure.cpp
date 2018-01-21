@@ -4,7 +4,6 @@
 3.增加姿态特征维度。
 */
 
-
 #include "posemeasure.h"
 #include "common.h"
 
@@ -47,7 +46,6 @@ vector<string> JOINTS = { "hip", "chest", "neck", "lShldr", "lForeArm", "lHand",
 void FileTool::Write2GT(string matrixPath, vector<vector<int>>& vec)
 {
 	ofstream matrixFile(matrixPath);
-
 
 	for (int i = 0; i < vec.size(); i++)
 	{
@@ -510,71 +508,61 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 	return label;
 }
 //读取knn训练样本的数据 bool isjulei代表是否是聚类点 因为俩路径不一样
-//20171130
+//20180121
 void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
 	vector<int>& trainLabel, vector<int>& testLabel,
 	string prefix, int row, int col, bool isjulei,
-	int actionBegin, int actionEnd,	int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd, int jiange,int dim)
+	int actionBegin, int actionEnd,	int indexBegin, int indexEnd, int jiange,int dim)
 {
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
-		for (int people = peopleBegin; people <= peopleEnd; people++)
+		for (int index = indexBegin; index <= indexEnd; index++)
 		{
-			if (people == 3) continue;
 
-			for (int index = indexBegin; index <= indexEnd; index++)
+			int label;
+			Mat sample;
+			int m = row, n = col;//虚拟数据groundtruth m = 20 , n=3
+			stringstream ss;
+
+			if (isjulei)
 			{
-				if (action == 8 || action == 9){ if (index >= 200)continue; }
-
-				int label;
-				Mat sample;
-				int m = row, n = col;//虚拟数据groundtruth m = 20 , n=3
-				stringstream ss;
-
-				if (isjulei)
-				{
-					if (dim == 3)ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature.txt";
-					else ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
-				}
-				else//关节点
-				{
-					ss << prefix << "\\action" << action << "\\people" << people << "\\3dfeature" << index << ".txt";
-				}
-
-				string path = ss.str();
-				sample = filetool.InitMat(path, m, n, true, label);
-				cout << path << endl;
-				normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//归一化
-
-				if (index % 3 == 0)//取样做为测试
-				{
-					indexmptest[testSample.size()] = action * 10000 + people * 1000 + index;
-
-					testLabel.push_back(label);
-					testSample.push_back(sample);
-				}
-				//else //train
-				if (index % jiange == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离 train不全取以免全相似
-				{
-
-					indexmp[trainSample.size()] = action * 10000 + people * 1000 + index;
-
-					trainLabel.push_back(label);
-					trainSample.push_back(sample);
-				}
-				//cout << sample << endl;
-				//cout << label << endl;
+				if (dim == 3)ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature.txt";
+				else ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
 			}
-		}
+			else//关节点
+			{
+				ss << prefix << "\\3dfeaturejoint" << action << "_" <<index << ".txt";
+			}
+
+			string path = ss.str();
+			sample = filetool.InitMat(path, m, n, true, label);
+			cout << path << endl;
+			normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//归一化
+
+			if (index % 5 == 0)//取样做为测试
+			{
+				indexmptest[testSample.size()] = action * 10000 + index;
+
+				testLabel.push_back(label);
+				testSample.push_back(sample);
+			}
+			//else //train
+			if (index % jiange == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离
+			{
+
+				indexmp[trainSample.size()] = action * 10000 + index;
+
+				trainLabel.push_back(label);
+				trainSample.push_back(sample);
+			}
+		}		
 	}
 }
 
 //测试一下knn是否跑通 跑正确 int jiange 代表多少帧采样 没个10帧还是5帧之类的
 //20171130
 void PoseMeasure::testknn(bool isjulei, int k, int startindex,
-	int actionBegin, int actionEnd,int peopleBegin, int peopleEnd,
-	int indexBegin, int indexEnd, string matrixName,int col,int jiange,int dim)
+	int actionBegin, int actionEnd,	int indexBegin, int indexEnd, string matrixName,int col,int jiange,int dim)
 {
 	vector<Mat> trainSample, testSample;
 	vector<int> trainLabel, testLabel;
@@ -590,7 +578,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		if (dim == 3)
 		{
 			//row = 1, col = 60;//groundtruth是60=20*3列  聚类特征是22*3=66
-			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 5, false, label);
+			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd,jiange);
 		}
 		if (dim == 4)
@@ -602,8 +590,8 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	}
 	else
 	{
-		prefix = "E:\\laboratory\\dataset\\synthesisdata\\bvhtransformdepthacquistion";
-		//row = 1, col = 60;
+		prefix = "D:\\EVAL20170704\\EVAL\\joints";
+		
 		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
 		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange);
 	}
