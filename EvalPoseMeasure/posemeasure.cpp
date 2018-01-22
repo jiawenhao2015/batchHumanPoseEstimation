@@ -380,7 +380,6 @@ void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int acti
 	fea.close();
 }
 
-
 //读取一个txt 返回一个m*n的矩阵 训练数据里面包含label 最后一个数字是label
 Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& label)
 {
@@ -418,7 +417,6 @@ Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& l
 	return mat;
 }
 
-
 //特征向量归一化
 //20171201
 void PoseMeasure::Normalization(Mat& mat)
@@ -445,9 +443,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 {
 	int label=0, n = trainSample.size();
 	map<float, vector<int>>mp;//记录距离与训练集的索引 距离从小到大排列
-
 	map<int, float>indexMpDis;//记录索引帧对应的距离。。。
-
 
 	ofstream of(prefix + "\\" + to_string(actionBegin) + "-" + to_string(actionEnd) + matrixName+"distance.txt");
 
@@ -517,10 +513,9 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 	{
 		for (int index = indexBegin; index <= indexEnd; index++)
 		{
-
 			int label;
 			Mat sample;
-			int m = row, n = col;//虚拟数据groundtruth m = 20 , n=3
+			int m = row, n = col;
 			stringstream ss;
 
 			if (isjulei)
@@ -532,7 +527,6 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 			{
 				ss << prefix << "\\3dfeaturejoint" << action << "_" <<index << ".txt";
 			}
-
 			string path = ss.str();
 			ifstream ifexist(path);
 			if (!ifexist.is_open())	continue;
@@ -550,7 +544,6 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 			//else //train
 			if (index % jiange == 0)//test全取  任取一帧作为测试，，求与train中的样本的距离
 			{
-
 				indexmp[trainSample.size()] = action * 10000 + index;
 
 				trainLabel.push_back(label);
@@ -568,43 +561,34 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	vector<Mat> trainSample, testSample;
 	vector<int> trainLabel, testLabel;
 	string prefix;
-	int row=1;
-
-	int label, correct = 0;
+	int label, correct = 0,row=1;
 	Mat matrix;
 
 	if (isjulei)//聚类特征点
 	{
 		prefix = "D:\\EVAL20170704\\EVAL\\depth";
 		if (dim == 3)
-		{
-			//row = 1, col = 60;//groundtruth是60=20*3列  聚类特征是22*3=66
+		{			
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, indexBegin, indexEnd,jiange);
 		}
 		if (dim == 4)
-		{
-			//row = 1, col = 27 * 3;//groundtruth是60=20*3列  聚类特征是22*3=66 
+		{			
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 10, false, label);
 			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, indexBegin, indexEnd, jiange, 4);
 		}
 	}
 	else
 	{
-		prefix = "D:\\EVAL20170704\\EVAL\\joints";
-		
+		prefix = "D:\\EVAL20170704\\EVAL\\joints";		
 		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
 		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, indexBegin, indexEnd, jiange);
 	}
-
-
 	//startindex 是指数组下标索引  现在需要转换一下 比如输入测试帧直接是图片名称而不是在数组中的下标了
-
-	
+		
 	cout << "开始测试：" << endl; correct = 0;
 	for (int i = 0; i < testSample.size();i++)
 	{
-		
 		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
 		cout << "label:" << label << endl;
 
@@ -615,10 +599,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		}
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
-
 }
-
-
 
 //求两个三维点欧式距离
 float PoseMeasure::EucDis(vector<float>&a, vector<float>&b)
@@ -656,7 +637,6 @@ double PoseMeasure::DistanceOfPointToLine(S_Point* a, S_Point* b, S_Point* s)
 构造点线面相关的姿态特征。
 20180119
 */
-
 void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,int indexBegin, int indexEnd,int dim)
 {
 	string prefix = "D:\\EVAL20170704\\EVAL\\depth\\";
@@ -749,7 +729,6 @@ for (int i=0;i < X_vector.size(); ++i)
 float plane12[4] = { 0 };//定义用来储存平面参数的数组
 cvFitPlane(points_mat, plane12);//调用方程
 */
-
 void PoseMeasure::cvFitPlane(const CvMat* points, float* plane)
 {
 	// Estimate geometric centroid.
@@ -789,7 +768,6 @@ void PoseMeasure::cvFitPlane(const CvMat* points, float* plane)
 	cvReleaseMat(&W);
 	cvReleaseMat(&V);
 }
-
 /*
 20180103
 返回平面的单位化法向量
