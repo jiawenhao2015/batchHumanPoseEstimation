@@ -510,8 +510,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 //读取knn训练样本的数据 bool isjulei代表是否是聚类点 因为俩路径不一样
 //20180121
 void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& testSample,
-	vector<int>& trainLabel, vector<int>& testLabel,
-	string prefix, int row, int col, bool isjulei,
+	vector<int>& trainLabel, vector<int>& testLabel,string prefix, int row, int col, bool isjulei,
 	int actionBegin, int actionEnd,	int indexBegin, int indexEnd, int jiange,int dim)
 {
 	for (int action = actionBegin; action <= actionEnd; action++)
@@ -526,8 +525,8 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 
 			if (isjulei)
 			{
-				if (dim == 3)ss << prefix << "\\action" << action << "\\people" << people << "\\frame" << index << "\\3dfeature.txt";
-				else ss << prefix << "\\action" << action << "\\people" << people << "\\newframe" << index << "\\3dfeature.txt";
+				if (dim == 3)ss << prefix << "\\" << action << "\\"<< index << "\\3dfeature.txt";
+				else ss << prefix << "\\" << action << "\\" << index << "\\3dfeature4个点.txt";
 			}
 			else//关节点
 			{
@@ -535,6 +534,8 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 			}
 
 			string path = ss.str();
+			ifstream ifexist(path);
+			if (!ifexist.is_open())	continue;
 			sample = filetool.InitMat(path, m, n, true, label);
 			cout << path << endl;
 			normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//归一化
@@ -574,18 +575,18 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 
 	if (isjulei)//聚类特征点
 	{
-		prefix = "E:\\laboratory\\dataset\\synthesisdata\\mypartresults";
+		prefix = "D:\\EVAL20170704\\EVAL\\depth";
 		if (dim == 3)
 		{
 			//row = 1, col = 60;//groundtruth是60=20*3列  聚类特征是22*3=66
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
-			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd,jiange);
+			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, indexBegin, indexEnd,jiange);
 		}
 		if (dim == 4)
 		{
 			//row = 1, col = 27 * 3;//groundtruth是60=20*3列  聚类特征是22*3=66 
 			matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\" + matrixName, col, 10, false, label);
-			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange, 4);
+			getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, true, actionBegin, actionEnd, indexBegin, indexEnd, jiange, 4);
 		}
 	}
 	else
@@ -593,7 +594,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		prefix = "D:\\EVAL20170704\\EVAL\\joints";
 		
 		matrix = filetool.InitMat("E:\\xinyongjiacode\\code_bsm\\bsm\\"+ matrixName, col, 10, false, label);
-		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, peopleBegin, peopleEnd, indexBegin, indexEnd, jiange);
+		getTrainAndTestData(trainSample, testSample, trainLabel, testLabel, prefix, row, col, false, actionBegin, actionEnd, indexBegin, indexEnd, jiange);
 	}
 
 
