@@ -511,6 +511,8 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 {
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
+		if (action == 2 || action == 6 || action == 7 || 
+			action == 5 || action == 3 || action == 4)continue;
 		for (int index = indexBegin; index <= indexEnd; index++)
 		{
 			int label;
@@ -642,13 +644,13 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 	string prefix = "D:\\EVAL20170704\\EVAL\\depth\\";
 
 	stringstream  ss;
-	ss << prefix <<  actionBegin << "-" << actionEnd << "bsm_all_featurenew.txt";//最后一维是标签
+	ss << prefix <<  actionBegin << "-" << actionEnd << "bsm_all_featurenewpart.txt";//最后一维是标签
 	string p1 = ss.str();
 	ofstream fea(p1);
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
 		for (int index = indexBegin; index <= indexEnd; index++)
-		{			
+		{
 			vector<vector<float>> gt2;
 			stringstream  ss2, ss3;
 			ss3 << prefix << action << "\\" << index << "\\featurePoints3d.txt";			
@@ -710,6 +712,44 @@ void  PoseMeasure::creatClusterFeatureDianxianmian(int actionBegin, int actionEn
 			of << label << endl;
 			fea << label << endl;
 			of.close();
+		}
+	}
+	fea.close();
+}
+
+//将每一帧的3d聚类特征   汇总成一个文件
+//20180123
+void PoseMeasure::gather3dFeature(int actionBegin, int actionEnd, int indexBegin, int indexEnd)
+{
+	string prefix = "D:\\EVAL20170704\\EVAL\\depth\\";
+
+	stringstream  ss;
+	ss << prefix << actionBegin << "-" << actionEnd << "bsm_all_feature100-250.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int index = indexBegin; index <= indexEnd; index++)
+		{
+			vector<float> gt2;
+			stringstream  ss2;
+		
+			ss2 << prefix << action << "\\" << index << "\\3dfeature.txt";
+
+			string  p2 = ss2.str();
+
+			ifstream ifexist(p2);
+			if (!ifexist.is_open())	continue;
+
+			cout << p2<< endl;
+			filetool.ReadFile(p2, gt2);
+
+			for (int i = 0; i < gt2.size();i++)
+			{
+				if (i == 0)fea << gt2[i];
+				else fea << " " << gt2[i];
+			}			 	
+			fea << endl;			
 		}
 	}
 	fea.close();

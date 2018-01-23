@@ -52,7 +52,7 @@ public:
 	void  creatGroundTruthFeatureDianxianmian(int actionBegin, int actionEnd,int indexBegin, int indexEnd);
 	
 	void  creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,int indexBegin, int indexEnd, int dim = 3);
-
+	void gather3dFeature(int actionBegin, int actionEnd, int indexBegin, int indexEnd);
 
 
 	void Normalization(Mat& mat);
