@@ -379,7 +379,43 @@ void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int acti
 	}
 	fea.close();
 }
+//将每一帧的3d关节点特征   汇总成一个文件
+//20180123
+void PoseMeasure::gather3dGTFeature(int actionBegin, int actionEnd, int indexBegin, int indexEnd)
+{
+	string prefix = "D:\\EVAL20170704\\EVAL\\joints\\";
 
+	stringstream  ss;
+	ss << prefix << actionBegin << "-" << actionEnd << "bsm_joint_feature100-250.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int index = indexBegin; index <= indexEnd; index++)
+		{
+			vector<float> gt2;
+			stringstream  ss2;
+
+			ss2 << prefix << "3dfeaturejoint" << action << "_" << index << ".txt";
+
+			string  p2 = ss2.str();
+
+			ifstream ifexist(p2);
+			if (!ifexist.is_open())	continue;
+
+			cout << p2 << endl;
+			filetool.ReadFile(p2, gt2);
+
+			for (int i = 0; i < gt2.size(); i++)
+			{
+				if (i == 0)fea << gt2[i];
+				else fea << " " << gt2[i];
+			}
+			fea << endl;
+		}
+	}
+	fea.close();
+}
 //读取一个txt 返回一个m*n的矩阵 训练数据里面包含label 最后一个数字是label
 Mat FileTool::InitMat(string matrixPath, int m, int n, bool containlabel, int& label)
 {

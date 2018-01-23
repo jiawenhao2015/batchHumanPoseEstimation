@@ -53,7 +53,7 @@ public:
 	
 	void  creatClusterFeatureDianxianmian(int actionBegin, int actionEnd,int indexBegin, int indexEnd, int dim = 3);
 	void gather3dFeature(int actionBegin, int actionEnd, int indexBegin, int indexEnd);
-
+	void gather3dGTFeature(int actionBegin, int actionEnd, int indexBegin, int indexEnd);
 
 	void Normalization(Mat& mat);
 	int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
