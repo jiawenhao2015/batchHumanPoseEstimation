@@ -379,6 +379,85 @@ void  PoseMeasure::creatGroundTruthFeatureDianxianmian(int actionBegin, int acti
 	}
 	fea.close();
 }
+//20180124 
+void  PoseMeasure::creatGroundTruthFeatureDianxianmian222(int actionBegin, int actionEnd, int indexBegin, int indexEnd)
+{
+	string prefix = "D:\\EVAL20170704\\EVAL\\joints\\";
+
+	stringstream  ss;
+	ss << prefix << actionBegin << "-" << actionEnd << "bsm_joint_feature222.txt";//最后一维是标签
+	string p1 = ss.str();
+	ofstream fea(p1);
+	for (int action = actionBegin; action <= actionEnd; action++)
+	{
+		for (int index = indexBegin; index <= indexEnd; index++)
+		{
+			vector<vector<float>> gt2;
+			stringstream  ss2, ss3;
+			ss3 << prefix << "joint3d" << action << "_" << index << ".txt";
+			ss2 << prefix << "3d222featurejoint" << action << "_" << index << ".txt";
+
+			string p3 = ss3.str(), p2 = ss2.str();
+
+			ifstream ifexist(p3);
+			if (!ifexist.is_open())	continue;
+
+			cout << p3 << endl;
+			filetool.ReadmidGT(p3, gt2);
+
+			ofstream of(p2);
+			int label = action;
+
+			for (int i = 0; i < Newline_Num; i++)//连线距离
+			{
+				of << EucDis(gt2[newline[i * 2]], gt2[newline[i * 2 + 1]]) << endl;
+				fea << EucDis(gt2[newline[i * 2]], gt2[newline[i * 2 + 1]]) << " ";
+			}
+			for (int i = 0; i < Newline_Num; i++)//连线方向
+			{
+				vector<float>temp(3, 0), norm;
+				for (int k = 0; k < 3; k++)temp[k] = gt2[newline[i * 2]][k] - gt2[newline[i * 2 + 1]][k];
+				norm = NormalizationUnit(temp);
+				for (int k = 0; k < 3; k++){ fea << norm[k] << " "; of << norm[k] << endl; }
+			}
+
+			//点到四肢部分 直线距离
+			for (int i = 0; i < guanjielianXian.size() / 2; i++)
+			{
+				S_Point lineEnd1(gt2[guanjielianXian[2 * i]]), lineEnd2(gt2[guanjielianXian[2 * i + 1]]);//直线两端
+				S_Point pt1(gt2[guanjiexuyaoqiujulidedian[i][0]]);
+				double dis1 = DistanceOfPointToLine(&lineEnd1, &lineEnd2, &pt1);
+
+				fea << dis1 << " "; of << dis1 << endl;
+			}
+			//面的相关信息。。 2个平面法向量 之间方向
+			//首先求2个平面法向量
+			vector<vector<float>>norm(4);
+			for (int i = 0; i < 2; i++)
+			{
+				vector<vector<float>> part;//每个部位里面3个点
+				for (int j = 0; j < 3; j++)
+				{
+					part.push_back(gt2[guanjiepart[i][j]]);
+				}
+				norm[i] = getPlaneNorm(part);
+			}
+			//求法向量之间夹角
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = i + 1; j < 2; j++)
+				{
+					float angle = getTwoNormalAngle(norm[i], norm[j]);
+					fea << angle << " "; of << angle << endl;
+				}
+			}
+			of << label << endl;
+			fea << label << endl;
+			of.close();
+		}
+	}
+	fea.close();
+}
 //将每一帧的3d关节点特征   汇总成一个文件
 //20180123
 void PoseMeasure::gather3dGTFeature(int actionBegin, int actionEnd, int indexBegin, int indexEnd)
@@ -547,8 +626,8 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 {
 	for (int action = actionBegin; action <= actionEnd; action++)
 	{
-		if (action == 2 || action == 6 || action == 7 || 
-			action == 5 || action == 3 || action == 4)continue;
+		/*if (action == 2 || action == 6 || action == 7 || 
+			action == 5 || action == 3 || action == 4)continue;*/
 		for (int index = indexBegin; index <= indexEnd; index++)
 		{
 			int label;
