@@ -58,6 +58,9 @@ public:
 	void creatClusterFeatureDianxianmianJiao(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim);
 
 
+
+	bool evaluatePrecision(int testindex, vector<int>& result, int threshold);
+
 	void Normalization(Mat& mat);
 	int knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test, int testindex,
 		Mat& matrix, int k, string prefix, int actionBegin, int actionEnd, string matrixName);
