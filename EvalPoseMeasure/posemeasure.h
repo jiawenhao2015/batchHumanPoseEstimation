@@ -72,6 +72,7 @@ public:
 	void adjustNotOnBody();
 	void jiaozhun();
 	int SetLabel(int action, int people, int index);
+	bool evaluatePrecision(int testindex, vector<int>& result, int threshold);
 
 	float EucDis(vector<float>&a, vector<float>&b);
 	vector<float> NormalizationUnit(vector<float>&a);
@@ -85,7 +86,7 @@ public:
 	FileTool filetool;
 
 	map<int, int>mplabel;//索引对应的标签
-
+	vector<int> knnresult;//knn结果  前k个相似的图片索引
 	map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。
 	map<int, int>indexmptest;//记录ceshi集里面的帧的索引
 	PoseMeasure(){}

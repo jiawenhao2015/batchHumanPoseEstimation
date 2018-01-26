@@ -703,21 +703,92 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	}
 	//startindex 是指数组下标索引  现在需要转换一下 比如输入测试帧直接是图片名称而不是在数组中的下标了
 		
+	//cout << "开始测试：" << endl; correct = 0;
+	//for (int i = 0; i < testSample.size();i++)
+	//{
+	//	label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
+	//	cout << "label:" << label << endl;
+
+	//	if (label == testLabel[i])
+	//	{
+	//		correct++;
+	//		cout << "correct!" << endl;
+	//	}
+	//}
+	//cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
+
+
+	/*新的评价方法*/
 	cout << "开始测试：" << endl; correct = 0;
-	for (int i = 0; i < testSample.size();i++)
+	for (int i = 0; i < testSample.size(); i++)
 	{
 		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
 		cout << "label:" << label << endl;
-
-		if (label == testLabel[i])
+		cout << indexmptest[i] << "---------" << endl;
+		if (evaluatePrecision(indexmptest[i], knnresult, 3))
 		{
 			correct++;
 			cout << "correct!" << endl;
 		}
+		knnresult.clear();
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
 }
+/*
+20180126重新定义评价精度方法
+类似于一个窗口
+输入i 输出结果 如果为 i+1,i+2,i+3...为正确
+如果为 i-1,i-2,i-3...也为正确
+i+1 i-1 i+2 i-2 也为正确
+但是不能有逆序数 或者逆序数为1个算正确  或者2个算正确 统计一下不同情况的正确率 threshold
+（单独用一个序列做判断,或者其他序列如果在的话 不计算）
+*/
+bool PoseMeasure::evaluatePrecision(int testindex, vector<int>& result, int threshold)
+{
+	vector<int>left, right;
+	for (auto r : result)
+	{
+		if (r < testindex)left.push_back(r);
+		else right.push_back(r);
+	}
+	int inverseNumLeft = 0, inverseNumRight = 0;//记录左右两边的逆序数
 
+	for (int i = 0; i < left.size(); i++)
+	{
+		cout << left[i] << " ";
+	}
+	cout << endl;
+	for (int i = 0; i < right.size(); i++)
+	{
+		cout << right[i] << " ";
+	}
+	cout << endl;
+
+	//右边的数字顺序应该是从小到大 否则就是逆序
+	//左边相反
+	for (int i = 0; i < right.size(); i++)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			if (right[j]>right[i])
+			{
+				inverseNumRight++;
+				cout << right[j] << ">" << right[i] << endl;
+			}
+		}
+	}
+	for (int i = 0; i < left.size(); i++)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			if (left[j] < left[i])inverseNumLeft++;
+		}
+	}
+	cout << "inverseNumLeft:" << inverseNumLeft << "----inverseNumRight:" << inverseNumRight << endl;
+
+	if (inverseNumLeft + inverseNumRight > threshold)return false;
+	else return true;
+}
 //求两个三维点欧式距离
 float PoseMeasure::EucDis(vector<float>&a, vector<float>&b)
 {
@@ -950,7 +1021,6 @@ vector<float> PoseMeasure::getPlaneNorm(vector<vector<float>>&part)
 */
 float PoseMeasure::getTwoNormalAngle(vector<float>&normal1, vector<float>&normal2)
 {
-	
 	float cosTheta;
 	cosTheta = abs(normal1[0] * normal2[0] + normal1[1] * normal2[1] + normal1[2] * normal2[2]) / (sqrt(normal1[0] * normal1[0] + normal1[1] * normal1[1] + normal1[2] * normal1[2])*sqrt(normal2[0] * normal2[0] + normal2[1] * normal2[1] + normal2[2] * normal2[2]));	 
 	return cosTheta;
