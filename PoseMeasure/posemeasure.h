@@ -90,6 +90,8 @@ public:
 	float getTwoNormalAngle(vector<float>&norm1, vector<float>&norm2);
 	FileTool filetool;
 
+	vector<int> knnresult;//knn结果  前k个相似的图片索引
+
 	map<int, int>mplabel;//索引对应的标签
 
 	map<int, int>indexmp;//记录训练集里面的帧的索引 对应实际的硬盘上的位置 比如训练集数组第0个代表硬盘上第一个姿态。

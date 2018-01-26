@@ -724,6 +724,8 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 				<< "---label:" << trainLabel[it->second[j]] << endl;
 			backupK--;
 			indexfile << indexmp[it->second[j]] << " ";
+
+			knnresult.push_back(indexmp[it->second[j]]);//knn结果  前k个相似的图片索引
 		}
 	}
 	indexfile << endl;
@@ -866,10 +868,12 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		correct++;
 		cout << "correct!" << endl;
 	}*/
+
+
+	/*之前的评价方法
 	cout << "开始测试：" << endl; correct = 0;
 	for (int i = 0; i < testSample.size();i++)
 	{
-		
 		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
 		cout << "label:" << label << endl;
 
@@ -880,7 +884,23 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		}
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
+*/
 
+	/*新的评价方法*/
+	cout << "开始测试：" << endl; correct = 0;
+	for (int i = 0; i < testSample.size(); i++)
+	{
+		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
+		cout << "label:" << label << endl;
+		cout << indexmptest[i] << "---------" << endl;
+		if (evaluatePrecision(indexmptest[i], knnresult, 3))
+		{
+			correct++;
+			cout << "correct!" << endl;
+		}
+		knnresult.clear();
+	}
+	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
 }
 /*
 20180125重新定义评价精度方法
@@ -901,13 +921,28 @@ bool PoseMeasure::evaluatePrecision(int testindex,vector<int>& result, int thres
 	}
 	int inverseNumLeft = 0, inverseNumRight = 0;//记录左右两边的逆序数
 
+	for (int i = 0; i < left.size();i++)
+	{
+		cout << left[i] << " ";
+	}
+	cout << endl;
+	for (int i = 0; i < right.size(); i++)
+	{
+		cout << right[i] << " ";
+	}
+	cout << endl;
+
 	//右边的数字顺序应该是从小到大 否则就是逆序
 	//左边相反
 	for (int i = 0; i < right.size(); i++)
 	{
 		for (int j = 0; j < i; j++)
 		{
-			if (right[j]>right[i])inverseNumRight++;
+			if (right[j]>right[i])
+			{
+				inverseNumRight++;
+				cout << right[j] << ">" << right[i] << endl;
+			}
 		}
 	}
 	for (int i = 0; i < left.size();i++)
@@ -917,7 +952,7 @@ bool PoseMeasure::evaluatePrecision(int testindex,vector<int>& result, int thres
 			if (left[j] < left[i])inverseNumLeft++;
 		}
 	}
-	cout << "inverseNumLeft:"<<inverseNumLeft << " "<<"---inverseNumRight:"<<inverseNumRight << endl;
+	cout << "inverseNumLeft:"<<inverseNumLeft << "----inverseNumRight:"<<inverseNumRight << endl;
 
 	if (inverseNumLeft + inverseNumRight > threshold)return false;
 	else return true;	
