@@ -58,7 +58,7 @@ public:
 	void creatClusterFeatureDianxianmianJiao(int actionBegin, int actionEnd, int peopleBegin, int peopleEnd, int indexBegin, int indexEnd, int dim);
 
 
-
+	bool evaluatePrecision2(int testindex, vector<int>& result, int threshold);
 	bool evaluatePrecision(int testindex, vector<int>& result, int threshold);
 
 	void Normalization(Mat& mat);

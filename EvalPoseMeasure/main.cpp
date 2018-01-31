@@ -28,10 +28,11 @@ int main()
 
 //	pm.gather3dFeature(0, 5, 100, 250);
 //	pm.creatClusterFeatureDianxianmian(0,7,0, 450);//102weidu
-	int k = 10;
+	int k = 5;
 	int testindex = 71065;
-	pm.testknn(true, k, testindex, 0, 5, 100, 250, "eval0-5bsm_julei_feature100-250.txt", 102, 1);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
-//	pm.testknn(false, k, testindex, 0, 7, 0, 200, "eval0-5bsm_joint_feature100-250.txt", 43, 1);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+
+//	pm.testknn(true, k, testindex, 0, 0, 100, 250, "eval0-5bsm_julei_feature100-250.txt", 102, 1);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+	pm.testknn(false, k, testindex, 1, 1, 100, 250, "eval0-5bsm_joint_feature100-250.txt", 43, 1);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	
 //	pm.testknn(false, k, testindex, 0, 7, 0, 200, "evalGT0-7dianxianmianrank10.txt", 43, 1);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	

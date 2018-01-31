@@ -594,6 +594,7 @@ int PoseMeasure::knn(vector<Mat>&trainSample, vector<int>&trainLabel, Mat &test,
 				<< "---label:" << trainLabel[it->second[j]] << endl;
 			backupK--;
 			indexfile << indexmp[it->second[j]] << " ";
+			knnresult.push_back(indexmp[it->second[j]]);//knn结果  前k个相似的图片索引
 		}
 	}
 	indexfile << endl;
@@ -625,9 +626,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 	int actionBegin, int actionEnd,	int indexBegin, int indexEnd, int jiange,int dim)
 {
 	for (int action = actionBegin; action <= actionEnd; action++)
-	{
-		/*if (action == 2 || action == 6 || action == 7 || 
-			action == 5 || action == 3 || action == 4)continue;*/
+	{		
 		for (int index = indexBegin; index <= indexEnd; index++)
 		{
 			int label;
@@ -651,7 +650,7 @@ void PoseMeasure::getTrainAndTestData(vector<Mat>& trainSample, vector<Mat>& tes
 			cout << path << endl;
 			normalize(sample, sample, 1.0, 0.0, NORM_MINMAX);//归一化
 
-			if (index % 5 == 0)//取样做为测试
+			if (index % 3 == 0)//取样做为测试
 			{
 				indexmptest[testSample.size()] = action * 10000 + index;
 
@@ -725,7 +724,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
 		cout << "label:" << label << endl;
 		cout << indexmptest[i] << "---------" << endl;
-		if (evaluatePrecision(indexmptest[i], knnresult, 3))
+		if (evaluatePrecision(indexmptest[i], knnresult, 1))
 		{
 			correct++;
 			cout << "correct!" << endl;

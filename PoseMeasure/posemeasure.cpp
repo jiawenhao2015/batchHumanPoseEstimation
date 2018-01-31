@@ -893,7 +893,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
 		cout << "label:" << label << endl;
 		cout << indexmptest[i] << "---------" << endl;
-		if (evaluatePrecision(indexmptest[i], knnresult, 3))
+		if (evaluatePrecision(indexmptest[i], knnresult, 0))
 		{
 			correct++;
 			cout << "correct!" << endl;
@@ -902,6 +902,17 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
 }
+
+/*
+20180131 
+计算覆盖率？？
+*/
+bool PoseMeasure::evaluatePrecision2(int testindex, vector<int>& result, int threshold)
+{
+
+}
+
+
 /*
 20180125重新定义评价精度方法
 类似于一个窗口

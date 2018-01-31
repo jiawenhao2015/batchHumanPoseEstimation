@@ -20,7 +20,6 @@ int main()
 {
 	PoseMeasure pm;
 	FileTool ft;
-
 //	pm.creatGroundTruthFeatureDianxianmian(7, 9, 1, 1, 0, 299);//90维
 	//pm.adjustClusterPoint();
 	//pm.jiaozhun();
@@ -34,8 +33,8 @@ int main()
 //	pm.creatClusterFeatureDianxianmian(7, 9, 1, 1, 0, 299,4);//138维
 	int k = 5;
 	int testindex = 71065;
-	pm.testknn(true, k, testindex, 7, 7, 1, 1, 0, 299,"W_bsm7-9dianxianmianrank10.txt",138,1, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
-//	pm.testknn(false, k, testindex, 7, 7, 1, 1, 0, 299, "W_bsm7-9guanjiedianxianmianrank10.txt", 90,1, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+//	pm.testknn(true, k, testindex, 7, 7, 1, 1, 0, 299,"W_bsm7-9dianxianmianrank10.txt",138,1, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
+	pm.testknn(false, k, testindex, 9, 9, 1, 1, 0, 299, "W_bsm7-9guanjiedianxianmianrank10.txt", 90,1, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
 	
 	
 	//pm.testknn(true, k, testindex, 7, 9, 1, 1, 0, 299, "W_bsm7-9juleiLianxian.txt", 108, 5, 4);//true是聚类特征 最后一个参数是代表是几个特征点 默认3维
