@@ -885,8 +885,7 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
 */
-
-	/*新的评价方法*/
+		 
 	cout << "开始测试：" << endl; correct = 0;
 	for (int i = 0; i < testSample.size(); i++)
 	{
@@ -901,15 +900,35 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		knnresult.clear();
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
+	
 }
 
 /*
 20180131 
 计算覆盖率？？
+对于 1 2 3 4 5 6 7 8 9 10 11序列，如果输入第6帧 返回的5帧中  统计在这个序列里面的帧数
 */
-bool PoseMeasure::evaluatePrecision2(int testindex, vector<int>& result, int threshold)
-{
 
+int PoseMeasure::evaluatePrecision2(int testindex, vector<int>& result )
+{
+	int cnt = 0,k=1;
+	 
+	map<int, int>sequence;
+	map<int, int> actionsize;//存储action的最后一个索引标号  以免越界
+	actionsize[7] = 299, actionsize[8] = 199, actionsize[9] = 199;
+	int action = testindex / 10000;
+
+	while (sequence.size() < 10)//从两边取10帧
+	{
+		if (testindex - 3 * k >= 0) sequence[testindex - 3 * k] = 1;
+		if (testindex + 3 * k <= actionsize[action])sequence[testindex + 3 * k] = 1;
+		k++;
+	}
+	for (int i = 0; i < result.size(); i++)//统计结果 是否在sequece里面
+	{
+		if (sequence.find(result[i]) != sequence.end())cnt++;
+	}
+	return  cnt;
 }
 
 
