@@ -73,6 +73,7 @@ public:
 	void jiaozhun();
 	int SetLabel(int action, int people, int index);
 	bool evaluatePrecision(int testindex, vector<int>& result, int threshold);
+	int  evaluatePrecision2(int testindex, vector<int>& result);
 
 	float EucDis(vector<float>&a, vector<float>&b);
 	vector<float> NormalizationUnit(vector<float>&a);

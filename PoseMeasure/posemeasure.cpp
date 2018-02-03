@@ -885,8 +885,8 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
 */
-		 
-	cout << "开始测试：" << endl; correct = 0;
+	/*统计逆序数 的评价方法*/
+	/*cout << "开始测试：" << endl; correct = 0;
 	for (int i = 0; i < testSample.size(); i++)
 	{
 		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);
@@ -900,7 +900,19 @@ void PoseMeasure::testknn(bool isjulei, int k, int startindex,
 		knnresult.clear();
 	}
 	cout << "正确率：" << correct << "/" << testSample.size() << "=" << ((float)correct / (float)testSample.size()) << endl;
-	
+	*/
+
+	/*统计覆盖率的评价方法*/
+	cout << "开始测试：" << endl; correct = 0;
+	for (int i = 0; i < testSample.size(); i++)
+	{
+		label = knn(trainSample, trainLabel, testSample[i], i, matrix, k, prefix, actionBegin, actionEnd, matrixName);		 
+		cout << indexmptest[i] << "---------" << endl;
+		correct += evaluatePrecision2(indexmptest[i], knnresult);		 
+		knnresult.clear();
+	}
+	cout << "覆盖率：" << correct << "/" << 5 * testSample.size() << "=" << ((float)correct / (float)(5*testSample.size())) << endl;
+
 }
 
 /*
@@ -917,11 +929,11 @@ int PoseMeasure::evaluatePrecision2(int testindex, vector<int>& result )
 	map<int, int> actionsize;//存储action的最后一个索引标号  以免越界
 	actionsize[7] = 299, actionsize[8] = 199, actionsize[9] = 199;
 	int action = testindex / 10000;
-
+	int begin = action * 10000 + 1000;
 	while (sequence.size() < 10)//从两边取10帧
 	{
-		if (testindex - 3 * k >= 0) sequence[testindex - 3 * k] = 1;
-		if (testindex + 3 * k <= actionsize[action])sequence[testindex + 3 * k] = 1;
+		if (testindex -  k >= begin) sequence[testindex -  k] = 1;
+		if (testindex +  k <=  begin + actionsize[action])sequence[testindex +  k] = 1;
 		k++;
 	}
 	for (int i = 0; i < result.size(); i++)//统计结果 是否在sequece里面
